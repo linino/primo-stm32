@@ -26,7 +26,7 @@
 @python --version 2> nul
 @if %errorlevel% neq 0 echo Error: python not in PATH. If you are manually building the project, make sure to launch uVision from the python venv && exit /B %errorlevel%
 
-fromelf --bin %PROJECT_DIR%.axf -o %PROJECT_DIR%.bin
+fromelf --bin "%PROJECT_DIR%.axf" -o "%PROJECT_DIR%.bin"
 @if %errorlevel% neq 0 exit /b %errorlevel%
 
 fromelf --i32 %PROJECT_DIR%.axf -o %PROJECT_DIR%.hex

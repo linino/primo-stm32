@@ -583,6 +583,8 @@ static void SetSysClockTo24(void)
   /* SYSCLK, HCLK, PCLK2 and PCLK1 configuration ---------------------------*/
   /* Enable HSE */
   RCC->CR |= ((uint32_t)RCC_CR_HSEON);
+  /* Enable internal oscillator (mimmo) */
+	RCC->CR |= ((uint32_t)RCC_CR_HSEBYP);
 
   /* Wait till HSE is ready and if Time out is reached exit */
   do

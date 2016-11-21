@@ -33,55 +33,56 @@ COMPILER_ASSERT(DAPLINK_HIC_ID == DAPLINK_HIC_ID_STM32F103XB);
 #define USB_CONNECT_PORT_DISABLE()   (RCC->APB2ENR &= ~RCC_APB2Periph_GPIOA)
 #define USB_CONNECT_PORT             GPIOA
 #define USB_CONNECT_PIN              GPIO_Pin_15
-#define USB_CONNECT_ON()             (USB_CONNECT_PORT->BSRR = USB_CONNECT_PIN)
-#define USB_CONNECT_OFF()            (USB_CONNECT_PORT->BRR  = USB_CONNECT_PIN)
+#define USB_CONNECT_OFF()             (USB_CONNECT_PORT->BSRR = USB_CONNECT_PIN)
+#define USB_CONNECT_ON()            (USB_CONNECT_PORT->BRR  = USB_CONNECT_PIN)
 
 //Connected LED
-#define CONNECTED_LED_PORT           GPIOB
-#define CONNECTED_LED_PIN            GPIO_Pin_6
-#define CONNECTED_LED_PIN_Bit        6
+#define CONNECTED_LED_PORT           GPIOC
+#define CONNECTED_LED_PIN            GPIO_Pin_7
+#define CONNECTED_LED_PIN_Bit        7
 
 //When bootloader, disable the target port(not used)
-#define POWER_EN_PIN_PORT            GPIOB
-#define POWER_EN_PIN                 GPIO_Pin_15
-#define POWER_EN_Bit                 15
+#define POWER_EN_PIN_PORT            GPIOC
+#define POWER_EN_PIN                 GPIO_Pin_6
+#define POWER_EN_Bit                 6
 
 //Press and power, enter bootloader 7
 //When daplnk_if, reset target board
-#define nRESET_PIN_PORT              GPIOB
-#define nRESET_PIN                   GPIO_Pin_7
-#define nRESET_PIN_Bit               7
+#define nRESET_PIN_PORT              GPIOA
+#define nRESET_PIN                   GPIO_Pin_6
+#define nRESET_PIN_Bit               6
 
 //SWD
-#define SWCLK_TCK_PIN_PORT           GPIOB
-#define SWCLK_TCK_PIN                GPIO_Pin_13
-#define SWCLK_TCK_PIN_Bit            13
+#define SWCLK_TCK_PIN_PORT           GPIOA
+#define SWCLK_TCK_PIN                GPIO_Pin_4
+#define SWCLK_TCK_PIN_Bit            4
 
-#define SWDIO_OUT_PIN_PORT           GPIOB
-#define SWDIO_OUT_PIN                GPIO_Pin_14
-#define SWDIO_OUT_PIN_Bit            14
+#define SWDIO_OUT_PIN_PORT           GPIOA
+#define SWDIO_OUT_PIN                GPIO_Pin_5
+#define SWDIO_OUT_PIN_Bit            5
 
+//not connected
 #define SWDIO_IN_PIN_PORT            GPIOB
-#define SWDIO_IN_PIN                 GPIO_Pin_12
-#define SWDIO_IN_PIN_Bit             12
+#define SWDIO_IN_PIN                 GPIO_Pin_14
+#define SWDIO_IN_PIN_Bit             14
 
 //LEDs
 //USB status LED
-#define RUNNING_LED_PORT             GPIOB
-#define RUNNING_LED_PIN              GPIO_Pin_5
-#define RUNNING_LED_Bit              5
+#define RUNNING_LED_PORT             GPIOC
+#define RUNNING_LED_PIN              GPIO_Pin_8
+#define RUNNING_LED_Bit              8
 
-#define PIN_HID_LED_PORT             GPIOB
-#define PIN_HID_LED                  GPIO_Pin_6
-#define PIN_HID_LED_Bit              6
+#define PIN_HID_LED_PORT             GPIOC
+#define PIN_HID_LED                  GPIO_Pin_9
+#define PIN_HID_LED_Bit              9
 
-#define PIN_CDC_LED_PORT             GPIOB
-#define PIN_CDC_LED                  GPIO_Pin_6
-#define PIN_CDC_LED_Bit              6
+#define PIN_CDC_LED_PORT             GPIOC
+#define PIN_CDC_LED                  GPIO_Pin_9
+#define PIN_CDC_LED_Bit              9
 
-#define PIN_MSC_LED_PORT             GPIOB
-#define PIN_MSC_LED                  GPIO_Pin_6
-#define PIN_MSC_LED_Bit              6
+#define PIN_MSC_LED_PORT             GPIOA
+#define PIN_MSC_LED                  GPIO_Pin_8
+#define PIN_MSC_LED_Bit              8
 
 
 #endif

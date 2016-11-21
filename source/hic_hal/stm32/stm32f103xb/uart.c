@@ -26,21 +26,21 @@
 #include "gpio.h"
 
 // For usart
-#define CDC_UART                     USART2
-#define CDC_UART_ENABLE()            RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE)
-#define CDC_UART_DISABLE()           RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, DISABLE)
-#define CDC_UART_IRQn                USART2_IRQn
-#define CDC_UART_IRQn_Handler        USART2_IRQHandler
+#define CDC_UART                     USART1
+#define CDC_UART_ENABLE()            RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE)
+#define CDC_UART_DISABLE()           RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, DISABLE)
+#define CDC_UART_IRQn                USART1_IRQn
+#define CDC_UART_IRQn_Handler        USART1_IRQHandler
 
 #define UART_PINS_PORT_ENABLE()      RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE)
 #define UART_PINS_PORT_DISABLE()     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , DISABLE)
 
 #define UART_TX_PORT                 GPIOA
-#define UART_TX_PIN                  GPIO_Pin_2
+#define UART_TX_PIN                  GPIO_Pin_9
 #define UART_TX_PIN_SOURCE           GPIO_PinSource2
 
 #define UART_RX_PORT                 GPIOA
-#define UART_RX_PIN                  GPIO_Pin_3
+#define UART_RX_PIN                  GPIO_Pin_10
 #define UART_RX_PIN_SOURCE           GPIO_PinSource3
 
 #define UART_CTS_PORT                GPIOA
@@ -127,6 +127,7 @@ int32_t uart_initialize(void)
     GPIO_InitStructure.GPIO_Pin = UART_RX_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(UART_RX_PORT, &GPIO_InitStructure);
+/* mimmo
     //CTS pin, input
     GPIO_InitStructure.GPIO_Pin = UART_CTS_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
@@ -137,7 +138,7 @@ int32_t uart_initialize(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(UART_RTS_PORT, &GPIO_InitStructure);
     GPIO_ResetBits(UART_RTS_PORT, UART_RTS_PIN);
-    
+*/
     //Only 8 bit support
     data_bits = USART_WordLength_8b;
     // parity

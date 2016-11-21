@@ -20,7 +20,7 @@
  */
 
 #include "stm32f10x.h"
-#include "RTL.h"
+//#include "RTL.h"
 #include "DAP_config.h"
 #include "gpio.h"
 #include "target_reset.h"
@@ -93,7 +93,8 @@ void gpio_init(void)
     // Config ReadOut protection
     if(FLASH_GetReadOutProtectionStatus() != SET) {
         FLASH_Unlock();
-        FLASH_ReadOutProtection(ENABLE);
+        //FLASH_ReadOutProtection(ENABLE);	//mimmo
+				FLASH_ReadOutProtection(DISABLE);
         FLASH_Lock();
     }
     // Let the voltage rails stabilize.  This is especailly important
@@ -161,7 +162,8 @@ uint8_t gpio_get_sw_reset(void)
     reset_pressed = reset_forward_pressed || ((nRESET_PIN_PORT->IDR & nRESET_PIN) ? 0 : 1);
     // Config nRESET_PIN to output
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    nRESET_PIN_PORT->BSRR = nRESET_PIN;
+    //nRESET_PIN_PORT->BSRR = nRESET_PIN;
+		nRESET_PIN_PORT->BRR = nRESET_PIN;
 
     return !reset_pressed;
 }

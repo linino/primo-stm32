@@ -151,10 +151,10 @@ uint8_t gpio_get_sw_reset(void)
     if(last_reset_forward_pressed != reset_forward_pressed) {
 #if defined(DAPLINK_IF)
         if(reset_forward_pressed) {
-            target_set_state(RESET_HOLD);
+            target_set_state(RESET_RUN);
         }
         else {
-            target_set_state(RESET_RUN);
+            target_set_state(RESET_HOLD);
         }
 #endif
         last_reset_forward_pressed = reset_forward_pressed;

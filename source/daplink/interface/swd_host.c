@@ -943,9 +943,9 @@ uint8_t swd_set_target_state_sw(TARGET_RESET_STATE state)
             break;
 
         case RESET_RUN:
-            //swd_set_target_reset(1);
+            swd_set_target_reset(1);
             os_dly_wait(2);
-            //swd_set_target_reset(0);
+            swd_set_target_reset(0);
             os_dly_wait(2);
             swd_off();
             break;

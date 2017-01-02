@@ -46,25 +46,18 @@ COMPILER_ASSERT(DAPLINK_HIC_ID == DAPLINK_HIC_ID_STM32F103XB);
 #define POWER_EN_PIN                 GPIO_Pin_6
 #define POWER_EN_Bit                 6
 
-//Press and power, enter bootloader 7
-//When daplnk_if, reset target board
 #define nRESET_PIN_PORT              GPIOA
-#define nRESET_PIN                   GPIO_Pin_6
-#define nRESET_PIN_Bit               6
+#define nRESET_PIN                   GPIO_Pin_7
+#define nRESET_PIN_Bit               7
 
 //SWD
 #define SWCLK_TCK_PIN_PORT           GPIOA
 #define SWCLK_TCK_PIN                GPIO_Pin_4
 #define SWCLK_TCK_PIN_Bit            4
 
-#define SWDIO_OUT_PIN_PORT           GPIOA
-#define SWDIO_OUT_PIN                GPIO_Pin_5
-#define SWDIO_OUT_PIN_Bit            5
-
-//not connected
-#define SWDIO_IN_PIN_PORT            GPIOB
-#define SWDIO_IN_PIN                 GPIO_Pin_14
-#define SWDIO_IN_PIN_Bit             14
+// SWDIO/TMS Pin
+#define PIN_SWDIO_TMS_PORT		GPIOA
+#define PIN_SWDIO_TMS_PIN			5
 
 //LEDs
 //USB status LED

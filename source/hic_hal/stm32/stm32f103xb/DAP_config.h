@@ -102,7 +102,7 @@ Provides definitions about:
 #define PIN_MODE_MASK(pin)		(((uint32_t)0x0F) << ((pin) << 2))
 #define PIN_MODE(mode,pin)		(((uint32_t)mode) << ((pin) << 2))
 #define PIN_MASK(pin)			(((uint16_t)0x01) << (pin))
-#define PIN_SWDIO_TMS			PIN_MASK(PIN_SWDIO_TMS_PIN)
+#define PIN_SWDIO_TMS			PIN_MASK(SWDIO_TMS_PIN_Bit)
 
 
 static __inline void pin_out_init(GPIO_TypeDef* GPIOx, uint8_t pin_bit)
@@ -151,29 +151,29 @@ static __inline void pin_in_init(GPIO_TypeDef* GPIOx, uint8_t pin_bit, uint8_t m
 
 //	For fast switch between input and output mode
 //	without GPIO_Init call
-#if (PIN_SWDIO_TMS_PIN >= 8)
+#if (SWDIO_TMS_PIN_Bit >= 8)
 	#define PIN_SWDIO_TMS_OUT_DISABLE()					\
 		do {											\
-			PIN_SWDIO_TMS_PORT->CRH = (PIN_SWDIO_TMS_PORT->CRH & ~PIN_MODE_MASK(PIN_SWDIO_TMS_PIN - 8)) | PIN_MODE(0x8, PIN_SWDIO_TMS_PIN - 8);	\
-			PIN_SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PIN_PORT->CRH = (SWDIO_TMS_PIN_PORT->CRH & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit - 8)) | PIN_MODE(0x8, SWDIO_TMS_PIN_Bit - 8);	\
+			SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;	\
 		} while (0)
 
 	#define PIN_SWDIO_TMS_OUT_ENABLE()					\
 		do {											\
-			PIN_SWDIO_TMS_PORT->CRH = (PIN_SWDIO_TMS_PORT->CRH & ~PIN_MODE_MASK(PIN_SWDIO_TMS_PIN - 8)) | PIN_MODE(0x3, PIN_SWDIO_TMS_PIN - 8);	\
-			PIN_SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PIN_PORT->CRH = (SWDIO_TMS_PIN_PORT->CRH & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit - 8)) | PIN_MODE(0x3, SWDIO_TMS_PIN_Bit - 8);	\
+			SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;	\
 		} while (0)
 #else
 	#define PIN_SWDIO_TMS_OUT_DISABLE()					\
 		do {											\
-			PIN_SWDIO_TMS_PORT->CRL = (PIN_SWDIO_TMS_PORT->CRL & ~PIN_MODE_MASK(PIN_SWDIO_TMS_PIN)) | PIN_MODE(0x8, PIN_SWDIO_TMS_PIN);	\
-			PIN_SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PIN_PORT->CRL = (SWDIO_TMS_PIN_PORT->CRL & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit)) | PIN_MODE(0x8, SWDIO_TMS_PIN_Bit);	\
+			SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;	\
 		} while (0)
 
 	#define PIN_SWDIO_TMS_OUT_ENABLE()					\
 		do {											\
-			PIN_SWDIO_TMS_PORT->CRL = (PIN_SWDIO_TMS_PORT->CRL & ~PIN_MODE_MASK(PIN_SWDIO_TMS_PIN)) | PIN_MODE(0x3, PIN_SWDIO_TMS_PIN);	\
-			PIN_SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PIN_PORT->CRL = (SWDIO_TMS_PIN_PORT->CRL & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit)) | PIN_MODE(0x3, SWDIO_TMS_PIN_Bit);	\
+			SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;	\
 		} while (0)
 
 #endif
@@ -286,7 +286,7 @@ static __forceinline void PIN_SWCLK_TCK_CLR(void)
 */
 static __forceinline uint32_t PIN_SWDIO_TMS_IN(void)
 {
-		return (PIN_SWDIO_TMS_PORT->IDR & PIN_SWDIO_TMS) ? 1 : 0;
+		return (SWDIO_TMS_PIN_PORT->IDR & PIN_SWDIO_TMS) ? 1 : 0;
 }
 
 /** SWDIO/TMS I/O pin: Set Output to High.
@@ -294,7 +294,7 @@ Set the SWDIO/TMS DAP hardware I/O pin to high level.
 */
 static __forceinline void PIN_SWDIO_TMS_SET(void)
 {
-		PIN_SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;
+		SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;
 }
 
 /** SWDIO/TMS I/O pin: Set Output to Low.
@@ -302,7 +302,7 @@ Set the SWDIO/TMS DAP hardware I/O pin to low level.
 */
 static __forceinline void PIN_SWDIO_TMS_CLR(void)
 {
-		PIN_SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;
+		SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;
 }
 
 /** SWDIO I/O pin: Get Input (used in SWD mode only).
@@ -310,7 +310,7 @@ static __forceinline void PIN_SWDIO_TMS_CLR(void)
 */
 static __forceinline uint32_t PIN_SWDIO_IN(void)
 {
-		if (PIN_SWDIO_TMS_PORT->IDR & PIN_SWDIO_TMS)
+		if (SWDIO_TMS_PIN_PORT->IDR & PIN_SWDIO_TMS)
 			return 1;
 		return 0;
 }
@@ -321,9 +321,9 @@ static __forceinline uint32_t PIN_SWDIO_IN(void)
 static __forceinline void PIN_SWDIO_OUT(uint32_t bit)
 {
 		if (bit & 1)
-			PIN_SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;
+			SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;
 		else
-			PIN_SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;
+			SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;
 }
 
 /** SWDIO I/O pin: Switch to Output mode (used in SWD mode only).
@@ -484,8 +484,8 @@ static __inline void DAP_SETUP(void)
     pin_out_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit);
     SWCLK_TCK_PIN_PORT->BSRR = SWCLK_TCK_PIN;
 	
-		pin_out_init(PIN_SWDIO_TMS_PORT, PIN_SWDIO_TMS_PIN);
-    PIN_SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS_PIN;
+		pin_out_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit);
+    SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN_Bit;
 
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
     nRESET_PIN_PORT->BSRR = nRESET_PIN;

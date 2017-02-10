@@ -162,8 +162,8 @@ uint8_t gpio_get_sw_reset(void)
     reset_pressed = reset_forward_pressed || ((nRESET_PIN_PORT->IDR & nRESET_PIN) ? 0 : 1);
     // Config nRESET_PIN to output
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    //nRESET_PIN_PORT->BSRR = nRESET_PIN;
-		nRESET_PIN_PORT->BRR = nRESET_PIN;
+    nRESET_PIN_PORT->BSRR = nRESET_PIN;
+		//nRESET_PIN_PORT->BRR = nRESET_PIN;
 
     return !reset_pressed;
 }

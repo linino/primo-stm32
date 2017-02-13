@@ -241,7 +241,7 @@ static __inline void PORT_SWD_SETUP(void)
 	
     // Set RESET HIGH
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    nRESET_PIN_PORT->BSRR = nRESET_PIN;
+    nRESET_PIN_PORT->BRR = nRESET_PIN;
 }
 
 /** Disable JTAG/SWD I/O Pins.
@@ -415,9 +415,9 @@ static __forceinline uint32_t PIN_nRESET_IN(void)
 static __forceinline void     PIN_nRESET_OUT(uint32_t bit)
 {
     if (bit & 1)
-        nRESET_PIN_PORT->BSRR = nRESET_PIN;
-    else
         nRESET_PIN_PORT->BRR = nRESET_PIN;
+    else
+        nRESET_PIN_PORT->BSRR = nRESET_PIN;
 }
 
 //**************************************************************************************************
@@ -488,7 +488,7 @@ static __inline void DAP_SETUP(void)
     SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN_Bit;
 
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    nRESET_PIN_PORT->BSRR = nRESET_PIN;
+    nRESET_PIN_PORT->BRR = nRESET_PIN;
 
     pin_out_init(CONNECTED_LED_PORT, CONNECTED_LED_PIN_Bit);
     CONNECTED_LED_PORT->BSRR = CONNECTED_LED_PIN;

@@ -257,7 +257,7 @@ __task void main_task(void)
     // thread running after usb connected started
     uint8_t thread_started = 0;
     // button state
-    main_reset_state_t main_reset_button_state = MAIN_RESET_RELEASED;
+    //main_reset_state_t main_reset_button_state = MAIN_RESET_RELEASED;
     // Initialize settings
     config_init();
     // Initialize our serial mailbox
@@ -300,13 +300,13 @@ __task void main_task(void)
             USBD_Handler();
         }
 
-        if (flags & FLAGS_MAIN_RESET) {
-            target_set_state(RESET_RUN);
-        }
+        //if (flags & FLAGS_MAIN_RESET) {
+            //target_set_state(RESET_RUN);
+        //}
 
         if (flags & FLAGS_MAIN_POWERDOWN) {
             // Disable debug
-            target_set_state(NO_DEBUG);
+            //target_set_state(NO_DEBUG);
             // Disconnect USB
             usbd_connect(0);
             // Turn off LED
@@ -318,10 +318,10 @@ __task void main_task(void)
             while (1);
         }
 
-        if (flags & FLAGS_MAIN_DISABLEDEBUG) {
+        //if (flags & FLAGS_MAIN_DISABLEDEBUG) {
             // Disable debug
-            target_set_state(NO_DEBUG);
-        }
+            //target_set_state(NO_DEBUG);
+        //}
 
         if (flags & FLAGS_MAIN_90MS) {
             // Update USB busy status
@@ -366,31 +366,31 @@ __task void main_task(void)
 
         // 30mS tick used for flashing LED when USB is busy
         if (flags & FLAGS_MAIN_30MS) {
-            // handle reset button without eventing
-            switch (main_reset_button_state) {
-                default:
-                case MAIN_RESET_RELEASED:
-                    if (0 == gpio_get_sw_reset()) {
-                        main_reset_button_state = MAIN_RESET_PRESSED;
-                        target_forward_reset(true);
-                    }
+					  // handle reset button without eventing
+            //switch (main_reset_button_state) {
+                //default:
+                //case MAIN_RESET_RELEASED:
+                    //if (0 == gpio_get_sw_reset()) {
+                        //main_reset_button_state = MAIN_RESET_PRESSED;
+                        //target_forward_reset(true);
+                    //}
 
-                    break;
+                    //break;
 
-                case MAIN_RESET_PRESSED:
+                //case MAIN_RESET_PRESSED:
 
                     // ToDo: add a counter to do a mass erase or target recovery after xxx seconds of being held
-                    if (1 == gpio_get_sw_reset()) {
-                        main_reset_button_state = MAIN_RESET_TARGET;
-                    }
+                    //if (1 == gpio_get_sw_reset()) {
+                        //main_reset_button_state = MAIN_RESET_TARGET;
+                    //}
 
-                    break;
+                    //break;
 
-                case MAIN_RESET_TARGET:
-                    target_forward_reset(false);
-                    main_reset_button_state = MAIN_RESET_RELEASED;
-                    break;
-            }
+                //case MAIN_RESET_TARGET:
+                    //target_forward_reset(false);
+                    //main_reset_button_state = MAIN_RESET_RELEASED;
+                    //break;
+            //}
 
             if (hid_led_usb_activity && ((hid_led_state == MAIN_LED_FLASH) || (hid_led_state == MAIN_LED_FLASH_PERMANENT))) {
                 // Flash DAP LED ONCE

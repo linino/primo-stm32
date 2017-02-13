@@ -73,9 +73,9 @@ void gpio_init(void)
     GPIO_Init(PIN_MSC_LED_PORT, &GPIO_InitStructure);
     GPIO_ResetBits(PIN_MSC_LED_PORT, PIN_MSC_LED);
 
-    // reset button configured as gpio input_pullup
+    // reset configured as gpio output
     GPIO_InitStructure.GPIO_Pin = nRESET_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
     GPIO_Init(nRESET_PIN_PORT, &GPIO_InitStructure);
 
     // Keep powered off in bootloader mode
@@ -162,8 +162,8 @@ uint8_t gpio_get_sw_reset(void)
     reset_pressed = reset_forward_pressed || ((nRESET_PIN_PORT->IDR & nRESET_PIN) ? 0 : 1);
     // Config nRESET_PIN to output
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    nRESET_PIN_PORT->BSRR = nRESET_PIN;
-		//nRESET_PIN_PORT->BRR = nRESET_PIN;
+    //nRESET_PIN_PORT->BSRR = nRESET_PIN;
+		nRESET_PIN_PORT->BRR = nRESET_PIN;
 
     return !reset_pressed;
 }

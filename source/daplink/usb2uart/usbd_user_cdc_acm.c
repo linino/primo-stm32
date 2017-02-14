@@ -116,7 +116,7 @@ int32_t USBD_CDC_ACM_SendBreak(uint16_t dur)
     // reset and send the unique id over CDC
     if (dur != 0) {
         start_break_time = os_time_get();
-        //target_set_state(RESET_HOLD);
+        target_set_state(RESET_HOLD);
     } else {
         end_break_time = os_time_get();
 

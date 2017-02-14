@@ -57,7 +57,7 @@ COMPILER_ASSERT(DAPLINK_HIC_ID == DAPLINK_HIC_ID_STM32F103XB);
 
 // SWDIO/TMS Pin
 #define SWDIO_TMS_PIN_PORT					 GPIOA
-#define SWDIO_TMS_PIN_			  			 GPIO_Pin_5
+#define SWDIO_TMS_PIN			  			 	 GPIO_Pin_5
 #define SWDIO_TMS_PIN_Bit						 5
 
 //LEDs

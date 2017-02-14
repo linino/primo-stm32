@@ -832,7 +832,7 @@ uint8_t swd_init_debug(void)
 
 __attribute__((weak)) void swd_set_target_reset(uint8_t asserted)
 {
-    (asserted) ? PIN_nRESET_OUT(0) : PIN_nRESET_OUT(1);
+    (asserted) ? PIN_nRESET_OUT(1) : PIN_nRESET_OUT(0);
 }
 
 uint8_t swd_set_target_state_hw(TARGET_RESET_STATE state)

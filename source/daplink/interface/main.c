@@ -300,9 +300,9 @@ __task void main_task(void)
             USBD_Handler();
         }
 
-        //if (flags & FLAGS_MAIN_RESET) {
-            //target_set_state(RESET_RUN);
-        //}
+        if (flags & FLAGS_MAIN_RESET) {
+            target_set_state(RESET_RUN);
+        }
 
         if (flags & FLAGS_MAIN_POWERDOWN) {
             // Disable debug

@@ -239,6 +239,9 @@ static __inline void PORT_SWD_SETUP(void)
     pin_out_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit);
     SWCLK_TCK_PIN_PORT->BSRR = SWCLK_TCK_PIN;
 	
+	  pin_out_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit);
+    SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN;
+	
     // Set RESET HIGH
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
     nRESET_PIN_PORT->BRR = nRESET_PIN;
@@ -250,7 +253,9 @@ Disables the DAP Hardware I/O pins which configures:
 */
 static __inline void PORT_OFF(void)
 {
-    pin_in_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit, 0);
+		pin_in_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit, 1);
+	
+		pin_in_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit, 1);
 }
 
 // SWCLK/TCK I/O pin -------------------------------------
@@ -481,11 +486,15 @@ static __inline void DAP_SETUP(void)
     /* Enable port clock */
     RCC->APB2ENR |= RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC;
     /* Configure I/O pin SWCLK */
-    pin_out_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit);
-    SWCLK_TCK_PIN_PORT->BSRR = SWCLK_TCK_PIN;
+    //pin_out_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit);
+    //SWCLK_TCK_PIN_PORT->BSRR = SWCLK_TCK_PIN;
 	
-		pin_out_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit);
-    SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN_Bit;
+		//pin_out_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit);
+    //SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN_Bit;
+	
+		pin_in_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit, 1);
+	
+		pin_in_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit, 1);
 
     pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
     nRESET_PIN_PORT->BRR = nRESET_PIN;

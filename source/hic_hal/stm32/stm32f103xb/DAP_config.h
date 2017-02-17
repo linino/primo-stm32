@@ -102,7 +102,7 @@ Provides definitions about:
 #define PIN_MODE_MASK(pin)		(((uint32_t)0x0F) << ((pin) << 2))
 #define PIN_MODE(mode,pin)		(((uint32_t)mode) << ((pin) << 2))
 #define PIN_MASK(pin)			(((uint16_t)0x01) << (pin))
-#define PIN_SWDIO_TMS			PIN_MASK(SWDIO_TMS_PIN_Bit)
+#define PIN_SWDIO_TMS			PIN_MASK(SWDIO_TMS_Bit)
 
 
 static __inline void pin_out_init(GPIO_TypeDef* GPIOx, uint8_t pin_bit)
@@ -154,26 +154,26 @@ static __inline void pin_in_init(GPIO_TypeDef* GPIOx, uint8_t pin_bit, uint8_t m
 #if (SWDIO_TMS_PIN_Bit >= 8)
 	#define PIN_SWDIO_TMS_OUT_DISABLE()					\
 		do {											\
-			SWDIO_TMS_PIN_PORT->CRH = (SWDIO_TMS_PIN_PORT->CRH & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit - 8)) | PIN_MODE(0x8, SWDIO_TMS_PIN_Bit - 8);	\
-			SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PORT->CRH = (SWDIO_TMS_PORT->CRH & ~PIN_MODE_MASK(SWDIO_TMS_Bit - 8)) | PIN_MODE(0x8, SWDIO_TMS_Bit - 8);	\
+			SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;	\
 		} while (0)
 
 	#define PIN_SWDIO_TMS_OUT_ENABLE()					\
 		do {											\
-			SWDIO_TMS_PIN_PORT->CRH = (SWDIO_TMS_PIN_PORT->CRH & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit - 8)) | PIN_MODE(0x3, SWDIO_TMS_PIN_Bit - 8);	\
-			SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PORT->CRH = (SWDIO_TMS_PORT->CRH & ~PIN_MODE_MASK(SWDIO_TMS_Bit - 8)) | PIN_MODE(0x3, SWDIO_TMS_Bit - 8);	\
+			SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;	\
 		} while (0)
 #else
 	#define PIN_SWDIO_TMS_OUT_DISABLE()					\
 		do {											\
-			SWDIO_TMS_PIN_PORT->CRL = (SWDIO_TMS_PIN_PORT->CRL & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit)) | PIN_MODE(0x8, SWDIO_TMS_PIN_Bit);	\
-			SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PORT->CRL = (SWDIO_TMS_PORT->CRL & ~PIN_MODE_MASK(SWDIO_TMS_Bit)) | PIN_MODE(0x8, SWDIO_TMS_Bit);	\
+			SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;	\
 		} while (0)
 
 	#define PIN_SWDIO_TMS_OUT_ENABLE()					\
 		do {											\
-			SWDIO_TMS_PIN_PORT->CRL = (SWDIO_TMS_PIN_PORT->CRL & ~PIN_MODE_MASK(SWDIO_TMS_PIN_Bit)) | PIN_MODE(0x3, SWDIO_TMS_PIN_Bit);	\
-			SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;	\
+			SWDIO_TMS_PORT->CRL = (SWDIO_TMS_PORT->CRL & ~PIN_MODE_MASK(SWDIO_TMS_Bit)) | PIN_MODE(0x3, SWDIO_TMS_Bit);	\
+			SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;	\
 		} while (0)
 
 #endif
@@ -236,15 +236,15 @@ Configures the DAP Hardware I/O pins for Serial Wire Debug (SWD) mode:
 static __inline void PORT_SWD_SETUP(void)
 {
     // Set SWCLK HIGH
-    pin_out_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit);
-    SWCLK_TCK_PIN_PORT->BSRR = SWCLK_TCK_PIN;
+    pin_out_init(SWCLK_TCK_PORT, SWCLK_TCK_Bit);
+    SWCLK_TCK_PORT->BSRR = SWCLK_TCK_PIN;
 	
-	  pin_out_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit);
-    SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN;
+	  pin_out_init(SWDIO_TMS_PORT, SWDIO_TMS_Bit);
+    SWDIO_TMS_PORT->BSRR = SWDIO_TMS_PIN;
 	
     // Set RESET HIGH
-    pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    nRESET_PIN_PORT->BRR = nRESET_PIN;
+    pin_out_init(nRESET_PORT, nRESET_Bit);
+    nRESET_PORT->BRR = nRESET_PIN;
 }
 
 /** Disable JTAG/SWD I/O Pins.
@@ -253,9 +253,9 @@ Disables the DAP Hardware I/O pins which configures:
 */
 static __inline void PORT_OFF(void)
 {
-		pin_in_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit, 1);
+		pin_in_init(SWCLK_TCK_PORT, SWCLK_TCK_Bit, 1);
 	
-		pin_in_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit, 1);
+		pin_in_init(SWDIO_TMS_PORT, SWDIO_TMS_Bit, 1);
 }
 
 // SWCLK/TCK I/O pin -------------------------------------
@@ -265,7 +265,7 @@ static __inline void PORT_OFF(void)
 */
 static __forceinline uint32_t PIN_SWCLK_TCK_IN(void)
 {
-    return ((SWCLK_TCK_PIN_PORT->ODR & SWCLK_TCK_PIN) ? 1 : 0);
+    return ((SWCLK_TCK_PORT->ODR & SWCLK_TCK_PIN) ? 1 : 0);
 }
 
 /** SWCLK/TCK I/O pin: Set Output to High.
@@ -273,7 +273,7 @@ Set the SWCLK/TCK DAP hardware I/O pin to high level.
 */
 static __forceinline void PIN_SWCLK_TCK_SET(void)
 {
-    SWCLK_TCK_PIN_PORT->BSRR = SWCLK_TCK_PIN;
+    SWCLK_TCK_PORT->BSRR = SWCLK_TCK_PIN;
 }
 
 /** SWCLK/TCK I/O pin: Set Output to Low.
@@ -281,7 +281,7 @@ Set the SWCLK/TCK DAP hardware I/O pin to low level.
 */
 static __forceinline void PIN_SWCLK_TCK_CLR(void)
 {
-    SWCLK_TCK_PIN_PORT->BRR = SWCLK_TCK_PIN;
+    SWCLK_TCK_PORT->BRR = SWCLK_TCK_PIN;
 }
 
 // SWDIO/TMS Pin I/O --------------------------------------
@@ -291,7 +291,7 @@ static __forceinline void PIN_SWCLK_TCK_CLR(void)
 */
 static __forceinline uint32_t PIN_SWDIO_TMS_IN(void)
 {
-		return (SWDIO_TMS_PIN_PORT->IDR & PIN_SWDIO_TMS) ? 1 : 0;
+		return (SWDIO_TMS_PORT->IDR & PIN_SWDIO_TMS) ? 1 : 0;
 }
 
 /** SWDIO/TMS I/O pin: Set Output to High.
@@ -299,7 +299,7 @@ Set the SWDIO/TMS DAP hardware I/O pin to high level.
 */
 static __forceinline void PIN_SWDIO_TMS_SET(void)
 {
-		SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;
+		SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;
 }
 
 /** SWDIO/TMS I/O pin: Set Output to Low.
@@ -307,7 +307,7 @@ Set the SWDIO/TMS DAP hardware I/O pin to low level.
 */
 static __forceinline void PIN_SWDIO_TMS_CLR(void)
 {
-		SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;
+		SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;
 }
 
 /** SWDIO I/O pin: Get Input (used in SWD mode only).
@@ -315,7 +315,7 @@ static __forceinline void PIN_SWDIO_TMS_CLR(void)
 */
 static __forceinline uint32_t PIN_SWDIO_IN(void)
 {
-		if (SWDIO_TMS_PIN_PORT->IDR & PIN_SWDIO_TMS)
+		if (SWDIO_TMS_PORT->IDR & PIN_SWDIO_TMS)
 			return 1;
 		return 0;
 }
@@ -326,9 +326,9 @@ static __forceinline uint32_t PIN_SWDIO_IN(void)
 static __forceinline void PIN_SWDIO_OUT(uint32_t bit)
 {
 		if (bit & 1)
-			SWDIO_TMS_PIN_PORT->BSRR = PIN_SWDIO_TMS;
+			SWDIO_TMS_PORT->BSRR = PIN_SWDIO_TMS;
 		else
-			SWDIO_TMS_PIN_PORT->BRR  = PIN_SWDIO_TMS;
+			SWDIO_TMS_PORT->BRR  = PIN_SWDIO_TMS;
 }
 
 /** SWDIO I/O pin: Switch to Output mode (used in SWD mode only).
@@ -407,7 +407,7 @@ static __forceinline void PIN_nTRST_OUT(uint32_t bit)
 */
 static __forceinline uint32_t PIN_nRESET_IN(void)
 {
-    return ((nRESET_PIN_PORT->IDR >> nRESET_PIN_Bit) & 1);
+    return ((nRESET_PORT->IDR >> nRESET_Bit) & 1);
 }
 
 /** nRESET I/O pin: Set Output.
@@ -420,9 +420,9 @@ static __forceinline uint32_t PIN_nRESET_IN(void)
 static __forceinline void     PIN_nRESET_OUT(uint32_t bit)
 {
     if (bit & 1)
-        nRESET_PIN_PORT->BRR = nRESET_PIN;
+        nRESET_PORT->BRR = nRESET_PIN;
     else
-        nRESET_PIN_PORT->BSRR = nRESET_PIN;
+        nRESET_PORT->BSRR = nRESET_PIN;
 }
 
 //**************************************************************************************************
@@ -492,14 +492,14 @@ static __inline void DAP_SETUP(void)
 		//pin_out_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit);
     //SWDIO_TMS_PIN_PORT->BSRR = SWDIO_TMS_PIN_Bit;
 	
-		pin_in_init(SWCLK_TCK_PIN_PORT, SWCLK_TCK_PIN_Bit, 1);
+		pin_in_init(SWCLK_TCK_PORT, SWCLK_TCK_Bit, 1);
 	
-		pin_in_init(SWDIO_TMS_PIN_PORT, SWDIO_TMS_PIN_Bit, 1);
+		pin_in_init(SWDIO_TMS_PORT, SWDIO_TMS_Bit, 1);
 
-    pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    nRESET_PIN_PORT->BRR = nRESET_PIN;
+    pin_out_init(nRESET_PORT, nRESET_Bit);
+    nRESET_PORT->BRR = nRESET_PIN;
 
-    pin_out_init(CONNECTED_LED_PORT, CONNECTED_LED_PIN_Bit);
+    pin_out_init(CONNECTED_LED_PORT, CONNECTED_LED_Bit);
     CONNECTED_LED_PORT->BSRR = CONNECTED_LED_PIN;
 }
 

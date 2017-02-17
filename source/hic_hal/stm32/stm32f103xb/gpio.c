@@ -57,30 +57,68 @@ void gpio_init(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(CONNECTED_LED_PORT, &GPIO_InitStructure);
-    GPIO_ResetBits(CONNECTED_LED_PORT, CONNECTED_LED_PIN);
+    GPIO_SetBits(CONNECTED_LED_PORT, CONNECTED_LED_PIN);
 	
     GPIO_InitStructure.GPIO_Pin = RUNNING_LED_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(RUNNING_LED_PORT, &GPIO_InitStructure);
-    GPIO_ResetBits(RUNNING_LED_PORT, RUNNING_LED_PIN);
+    GPIO_SetBits(RUNNING_LED_PORT, RUNNING_LED_PIN);
 		
-		GPIO_InitStructure.GPIO_Pin = PIN_HID_LED;
-    GPIO_Init(PIN_HID_LED_PORT, &GPIO_InitStructure);
-    GPIO_ResetBits(PIN_HID_LED_PORT, PIN_HID_LED);
+		GPIO_InitStructure.GPIO_Pin = BLE_LED_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(BLE_LED_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(BLE_LED_PORT, BLE_LED_PIN);
+		
+		GPIO_InitStructure.GPIO_Pin = USER2_LED_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(USER2_LED_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(USER2_LED_PORT, USER2_LED_PIN);
+		
+		GPIO_InitStructure.GPIO_Pin = HID_LED_PIN;
+    GPIO_Init(HID_LED_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(HID_LED_PORT, HID_LED_PIN);
 
-    GPIO_InitStructure.GPIO_Pin = PIN_CDC_LED;
-    GPIO_Init(PIN_CDC_LED_PORT, &GPIO_InitStructure);
-    GPIO_ResetBits(PIN_CDC_LED_PORT, PIN_CDC_LED);
+    GPIO_InitStructure.GPIO_Pin = CDC_LED_PIN;
+    GPIO_Init(CDC_LED_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(CDC_LED_PORT, CDC_LED_PIN);
 
-    GPIO_InitStructure.GPIO_Pin = PIN_MSC_LED;
-    GPIO_Init(PIN_MSC_LED_PORT, &GPIO_InitStructure);
-    GPIO_ResetBits(PIN_MSC_LED_PORT, PIN_MSC_LED);
+    GPIO_InitStructure.GPIO_Pin = MSC_LED_PIN;
+    GPIO_Init(MSC_LED_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(MSC_LED_PORT, MSC_LED_PIN);
 
     // reset configured as gpio output
     GPIO_InitStructure.GPIO_Pin = nRESET_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-    GPIO_Init(nRESET_PIN_PORT, &GPIO_InitStructure);
+    GPIO_Init(nRESET_PORT, &GPIO_InitStructure);
+		
+	  GPIO_InitStructure.GPIO_Pin = SWD_PROG_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(SWD_PROG_PORT, &GPIO_InitStructure);
+		
+		GPIO_InitStructure.GPIO_Pin = ESP_PW_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(ESP_PW_PORT, &GPIO_InitStructure);
+		
+		GPIO_InitStructure.GPIO_Pin = ESP_EN_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(ESP_EN_PORT, &GPIO_InitStructure);
+		
+		GPIO_InitStructure.GPIO_Pin = ESP_0_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(ESP_0_PORT, &GPIO_InitStructure);
+		
+		GPIO_InitStructure.GPIO_Pin = ESP_4_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(ESP_4_PORT, &GPIO_InitStructure);
+
 
     // Keep powered off in bootloader mode
     // to prevent the target from effecting the state
@@ -91,8 +129,8 @@ void gpio_init(void)
         GPIO_InitStructure.GPIO_Pin = POWER_EN_PIN;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-        GPIO_Init(POWER_EN_PIN_PORT, &GPIO_InitStructure);
-        GPIO_SetBits(POWER_EN_PIN_PORT, POWER_EN_PIN);
+        GPIO_Init(POWER_EN_PORT, &GPIO_InitStructure);
+        GPIO_SetBits(POWER_EN_PORT, POWER_EN_PIN);
     }
     // Config ReadOut protection
     if(FLASH_GetReadOutProtectionStatus() != SET) {
@@ -113,9 +151,9 @@ void gpio_init(void)
 void gpio_set_hid_led(gpio_led_state_t state)
 {
     if (state) {
-        GPIO_SetBits(PIN_HID_LED_PORT, PIN_HID_LED); // LED on
+        GPIO_SetBits(HID_LED_PORT, HID_LED_PIN); // LED on
     } else {
-        GPIO_ResetBits(PIN_HID_LED_PORT, PIN_HID_LED); // LED off
+        GPIO_ResetBits(HID_LED_PORT, HID_LED_PIN); // LED off
     }
 }
 
@@ -123,9 +161,9 @@ void gpio_set_cdc_led(gpio_led_state_t state)
 {
     //gpio_set_hid_led(state);
     if (state) {
-        GPIO_SetBits(PIN_CDC_LED_PORT, PIN_CDC_LED); // LED on
+        GPIO_SetBits(CDC_LED_PORT, CDC_LED_PIN); // LED on
     } else {
-        GPIO_ResetBits(PIN_CDC_LED_PORT, PIN_CDC_LED); // LED off
+        GPIO_ResetBits(CDC_LED_PORT, CDC_LED_PIN); // LED off
     }
 }
 
@@ -133,9 +171,9 @@ void gpio_set_msc_led(gpio_led_state_t state)
 {
     //gpio_set_hid_led(state);
     if (state) {
-        GPIO_SetBits(PIN_MSC_LED_PORT, PIN_MSC_LED); // LED on
+        GPIO_SetBits(MSC_LED_PORT, MSC_LED_PIN); // LED on
     } else {
-        GPIO_ResetBits(PIN_MSC_LED_PORT, PIN_MSC_LED); // LED off
+        GPIO_ResetBits(MSC_LED_PORT, MSC_LED_PIN); // LED off
     }
 }
 
@@ -146,9 +184,9 @@ uint8_t gpio_get_sw_reset(void)
     uint8_t reset_pressed;
 
     // Set nRESET_PIN to input pull-up, then read status
-    pin_in_init(nRESET_PIN_PORT, nRESET_PIN_Bit, 1);
+    pin_in_init(nRESET_PORT, nRESET_Bit, 1);
     busy_wait(5);
-    reset_forward_pressed = (nRESET_PIN_PORT->IDR & nRESET_PIN) ? 0 : 1;
+    reset_forward_pressed = (nRESET_PORT->IDR & nRESET_PIN) ? 0 : 1;
     // Forward reset if the state of the button has changed
     //    This must be done on button changes so it does not interfere
     //    with other reset sources such as programming or CDC Break
@@ -163,11 +201,11 @@ uint8_t gpio_get_sw_reset(void)
 #endif
         last_reset_forward_pressed = reset_forward_pressed;
     }
-    reset_pressed = reset_forward_pressed || ((nRESET_PIN_PORT->IDR & nRESET_PIN) ? 0 : 1);
+    reset_pressed = reset_forward_pressed || ((nRESET_PORT->IDR & nRESET_PIN) ? 0 : 1);
     // Config nRESET_PIN to output
-    pin_out_init(nRESET_PIN_PORT, nRESET_PIN_Bit);
-    //nRESET_PIN_PORT->BSRR = nRESET_PIN;
-		nRESET_PIN_PORT->BRR = nRESET_PIN;
+    pin_out_init(nRESET_PORT, nRESET_Bit);
+    //nRESET_PORT->BSRR = nRESET_PIN;
+		nRESET_PORT->BRR = nRESET_PIN;
 
     return !reset_pressed;
 }

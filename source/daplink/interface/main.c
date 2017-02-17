@@ -82,6 +82,8 @@ static U64 stk_dap_task[DAP_TASK_STACK / sizeof(U64)];
 static U64 stk_serial_task[SERIAL_TASK_STACK / sizeof(U64)];
 static U64 stk_main_task[MAIN_TASK_STACK / sizeof(U64)];
 
+void GPIO_GND_DETECT_SETUP(void);
+
 // Timer task, set flags every 30mS and 90mS
 __task void timer_task_30mS(void)
 {
@@ -168,6 +170,16 @@ void HardFault_Handler()
     NVIC_SystemReset();
 
     while (1); // Wait for reset
+}
+
+void Enable_External_SWD_Program()
+{
+	SWD_PROG_PORT->BSRR = SWD_PROG_PIN;
+}
+
+void Disable_External_SWD_Program()
+{
+	SWD_PROG_PORT->BRR = SWD_PROG_PIN;
 }
 
 os_mbx_declare(serial_mailbox, 20);
@@ -266,6 +278,13 @@ __task void main_task(void)
     main_task_id = os_tsk_self();
     // leds
     gpio_init();
+		GPIO_GND_DETECT_SETUP();
+		
+		if ((GND_DETECT_PORT->IDR & (1 << 2)))
+			Disable_External_SWD_Program();
+		else
+			Enable_External_SWD_Program();
+		
     // Turn on LED
     gpio_set_hid_led(GPIO_LED_ON);
     gpio_set_cdc_led(GPIO_LED_ON);
@@ -451,4 +470,38 @@ int main(void)
     SCB->VTOR = SCB_VTOR_TBLOFF_Msk & DAPLINK_ROM_IF_START;
 #endif
     os_sys_init_user(main_task, MAIN_TASK_PRIORITY, stk_main_task, MAIN_TASK_STACK);
+}
+
+void GPIO_GND_DETECT_SETUP()
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+  EXTI_InitTypeDef EXTI_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+  
+  /* Enable the GPIO Clock */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_AFIO, ENABLE);
+	
+	/* Configure Button pin as input floating */
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+  GPIO_InitStructure.GPIO_Pin = GND_DETECT_PIN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(GND_DETECT_PORT, &GPIO_InitStructure);
+	
+  /* Connect Button EXTI Line to Button GPIO Pin */
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, GPIO_PinSource2);
+
+  /* Configure Button EXTI line */
+  EXTI_InitStructure.EXTI_Line = EXTI_Line2;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+
+  /* Enable and set Button EXTI Interrupt to the lowest priority */
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+
+  NVIC_Init(&NVIC_InitStructure);  
 }

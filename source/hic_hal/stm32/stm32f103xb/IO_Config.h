@@ -37,101 +37,101 @@ COMPILER_ASSERT(DAPLINK_HIC_ID == DAPLINK_HIC_ID_STM32F103XB);
 #define USB_CONNECT_OFF()            (USB_CONNECT_PORT->BSRR = USB_CONNECT_PIN)
 
 // When bootloader, disable the target port(not used)
-#define POWER_EN_PIN_PORT            GPIOC
+#define POWER_EN_PORT		             GPIOC
 #define POWER_EN_PIN                 GPIO_Pin_6
 #define POWER_EN_Bit                 6
 
-#define nRESET_PIN_PORT              GPIOA
+#define nRESET_PORT                  GPIOA
 #define nRESET_PIN                   GPIO_Pin_6
-#define nRESET_PIN_Bit               6
+#define nRESET_Bit               		 6
 
 // SWDCLK
-#define SWCLK_TCK_PIN_PORT           GPIOA
+#define SWCLK_TCK_PORT               GPIOA
 #define SWCLK_TCK_PIN                GPIO_Pin_4
-#define SWCLK_TCK_PIN_Bit            4
+#define SWCLK_TCK_Bit            		 4
 
 // SWDIO/TMS
-#define SWDIO_TMS_PIN_PORT					 GPIOA
+#define SWDIO_TMS_PORT    					 GPIOA
 #define SWDIO_TMS_PIN			  			 	 GPIO_Pin_5
-#define SWDIO_TMS_PIN_Bit						 5
+#define SWDIO_TMS_Bit						     5
 
 // LEDs
 // Connected LED
 #define CONNECTED_LED_PORT           GPIOC
 #define CONNECTED_LED_PIN            GPIO_Pin_7
-#define CONNECTED_LED_PIN_Bit        7
+#define CONNECTED_LED_Bit            7
 
 // USB status LED
 #define RUNNING_LED_PORT             GPIOC
-#define RUNNING_LED_PIN              GPIO_Pin_8
+#define RUNNING_LED_PIN		           GPIO_Pin_8
 #define RUNNING_LED_Bit              8
 
-#define PIN_HID_LED_PORT             GPIOC
-#define PIN_HID_LED                  GPIO_Pin_6
-#define PIN_HID_LED_Bit              6
+#define HID_LED_PORT		             GPIOC
+#define HID_LED_PIN                  GPIO_Pin_6
+#define HID_LED_Bit     		         6
 
-#define PIN_CDC_LED_PORT             GPIOC
-#define PIN_CDC_LED                  GPIO_Pin_6
-#define PIN_CDC_LED_Bit              6
+#define CDC_LED_PORT                 GPIOC
+#define CDC_LED_PIN                  GPIO_Pin_6
+#define CDC_LED_Bit                  6
 
-#define PIN_MSC_LED_PORT             GPIOC
-#define PIN_MSC_LED                  GPIO_Pin_6
-#define PIN_MSC_LED_Bit              6
+#define MSC_LED_PORT                 GPIOC
+#define MSC_LED_PIN                  GPIO_Pin_6
+#define MSC_LED_Bit                  6
 
-#define PIN_BLE_LED_PORT           	 GPIOA
-#define PIN_BLE_LED                	 GPIO_Pin_8
-#define PIN_BLE_LED_Bit            	 8
+#define BLE_LED_PORT              	 GPIOA
+#define BLE_LED_PIN                  GPIO_Pin_8
+#define BLE_LED_Bit               	 8
 
-#define PIN_USER2_LED_PORT           GPIOC
-#define PIN_USER2_LED                GPIO_Pin_9
-#define PIN_USER2_LED_Bit            9
+#define USER2_LED_PORT               GPIOC
+#define USER2_LED_PIN                GPIO_Pin_9
+#define USER2_LED_Bit                9
 
 // Pin configured as output to progrm external borard
-#define PIN_SWD_PROG_PORT            GPIOC
-#define PIN_SWD_PROG                 GPIO_Pin_11
-#define PIN_SWD_PROG_Bit             11
+#define SWD_PROG_PORT                GPIOC
+#define SWD_PROG_PIN                 GPIO_Pin_11
+#define SWD_PROG_Bit                 11
 
 // Pin configured as output to control ESP 
-#define PIN_ESP_PW_PORT            	 GPIOB
-#define PIN_ESP_PW                   GPIO_Pin_0
-#define PIN_ESP_PW_Bit               0
+#define ESP_PW_PORT               	 GPIOB
+#define ESP_PW_PIN               		 GPIO_Pin_0
+#define ESP_PW_Bit                   0
 
-#define PIN_ESP_EN_PORT            	 GPIOB
-#define PIN_ESP_EN                   GPIO_Pin_1
-#define PIN_ESP_EN_Bit             	 1
+#define ESP_EN_PORT               	 GPIOB
+#define ESP_EN_PIN               		 GPIO_Pin_1
+#define ESP_EN_Bit                	 1
 
 // Pin configured as input
-#define PIN_USER1_PORT            	 GPIOC
-#define PIN_USER1                    GPIO_Pin_10
-#define PIN_USER1_Bit             	 10
+#define USER1_PORT                	 GPIOC
+#define USER1_PIN                    GPIO_Pin_10
+#define USER1_Bit                 	 10
 
-#define PIN_USER2_PORT            	 GPIOC
-#define PIN_USER2                    GPIO_Pin_4
-#define PIN_USER2_Bit             	 4
+#define USER2_PORT                	 GPIOC
+#define USER2_PIN                		 GPIO_Pin_4
+#define USER2_Bit                 	 4
 
-#define PIN_GND_DETECT_PORT          GPIOD
-#define PIN_GND_DETECT               GPIO_Pin_2
-#define PIN_GND_DETECT_Bit           2
+#define GND_DETECT_PORT              GPIOD
+#define GND_DETECT_PIN               GPIO_Pin_2
+#define GND_DETECT_Bit               2
 
-#define PIN_VOL_DET_PORT             GPIOA
-#define PIN_VOL_DET                  GPIO_Pin_7
-#define PIN_VOL_DET_Bit              7
+#define VOL_DET_PORT                 GPIOA
+#define VOL_DET_PIN                  GPIO_Pin_7
+#define VOL_DET_Bit                  7
 
-#define PIN_WKUP_PORT            	   GPIOA
-#define PIN_WKUP                     GPIO_Pin_0
-#define PIN_WKUP_Bit             		 0
+#define WKUP_PORT               	   GPIOA
+#define WKUP_PIN                     GPIO_Pin_0
+#define WKUP_Bit                		 0
 
-#define PIN_BAT_DET_PORT             GPIOC
-#define PIN_BAT_DET                  GPIO_Pin_12
-#define PIN_BAT_DET_Bit              12
+#define BAT_DET_PORT                 GPIOC
+#define BAT_DET_PIN                  GPIO_Pin_12
+#define BAT_DET_Bit                  12
 
-#define PIN_ESP_0_PORT            	 GPIOC
-#define PIN_ESP_0                    GPIO_Pin_5
-#define PIN_ESP_0_Bit             	 5
+#define ESP_0_PORT                	 GPIOC
+#define ESP_0_PIN                    GPIO_Pin_5
+#define ESP_0_Bit                 	 5
 
-#define PIN_ESP_4_PORT               GPIOB
-#define PIN_ESP_4                    GPIO_Pin_7
-#define PIN_ESP_4_Bit                7
+#define ESP_4_PORT                   GPIOB
+#define ESP_4_PIN                    GPIO_Pin_7
+#define ESP_4_Bit                    7
 
 
 #endif

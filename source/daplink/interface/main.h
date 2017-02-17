@@ -61,6 +61,8 @@ void main_force_msc_disconnect_event(void);
 void main_blink_hid_led(main_led_state_t permanent);
 void main_blink_msc_led(main_led_state_t permanent);
 void main_blink_cdc_led(main_led_state_t permanent);
+void Disable_External_SWD_Program(void);
+void Enable_External_SWD_Program(void);
 
 #ifdef __cplusplus
 }

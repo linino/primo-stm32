@@ -266,7 +266,7 @@ __task void main_task(void)
     main_task_id = os_tsk_self();
     // leds
     gpio_init();
-    // Turn off LED
+    // Turn on LED
     gpio_set_hid_led(GPIO_LED_ON);
     gpio_set_cdc_led(GPIO_LED_ON);
     gpio_set_msc_led(GPIO_LED_ON);

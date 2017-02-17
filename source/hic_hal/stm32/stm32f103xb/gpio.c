@@ -53,17 +53,21 @@ void gpio_init(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(USB_CONNECT_PORT, &GPIO_InitStructure);
     // configure LEDs
+	  GPIO_InitStructure.GPIO_Pin = CONNECTED_LED_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(CONNECTED_LED_PORT, &GPIO_InitStructure);
+    GPIO_ResetBits(CONNECTED_LED_PORT, CONNECTED_LED_PIN);
+	
     GPIO_InitStructure.GPIO_Pin = RUNNING_LED_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(RUNNING_LED_PORT, &GPIO_InitStructure);
     GPIO_ResetBits(RUNNING_LED_PORT, RUNNING_LED_PIN);
-
-    GPIO_InitStructure.GPIO_Pin = CONNECTED_LED_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(CONNECTED_LED_PORT, &GPIO_InitStructure);
-    GPIO_ResetBits(CONNECTED_LED_PORT, CONNECTED_LED_PIN);
+		
+		GPIO_InitStructure.GPIO_Pin = PIN_HID_LED;
+    GPIO_Init(PIN_HID_LED_PORT, &GPIO_InitStructure);
+    GPIO_ResetBits(PIN_HID_LED_PORT, PIN_HID_LED);
 
     GPIO_InitStructure.GPIO_Pin = PIN_CDC_LED;
     GPIO_Init(PIN_CDC_LED_PORT, &GPIO_InitStructure);
@@ -109,9 +113,9 @@ void gpio_init(void)
 void gpio_set_hid_led(gpio_led_state_t state)
 {
     if (state) {
-        GPIO_ResetBits(PIN_HID_LED_PORT, PIN_HID_LED); // LED on
+        GPIO_SetBits(PIN_HID_LED_PORT, PIN_HID_LED); // LED on
     } else {
-        GPIO_SetBits(PIN_HID_LED_PORT, PIN_HID_LED);   // LED off
+        GPIO_ResetBits(PIN_HID_LED_PORT, PIN_HID_LED); // LED off
     }
 }
 
@@ -119,9 +123,9 @@ void gpio_set_cdc_led(gpio_led_state_t state)
 {
     //gpio_set_hid_led(state);
     if (state) {
-        GPIO_ResetBits(PIN_CDC_LED_PORT, PIN_CDC_LED); // LED on
+        GPIO_SetBits(PIN_CDC_LED_PORT, PIN_CDC_LED); // LED on
     } else {
-        GPIO_SetBits(PIN_CDC_LED_PORT, PIN_CDC_LED);   // LED off
+        GPIO_ResetBits(PIN_CDC_LED_PORT, PIN_CDC_LED); // LED off
     }
 }
 
@@ -129,9 +133,9 @@ void gpio_set_msc_led(gpio_led_state_t state)
 {
     //gpio_set_hid_led(state);
     if (state) {
-        GPIO_ResetBits(PIN_MSC_LED_PORT, PIN_MSC_LED); // LED on
+        GPIO_SetBits(PIN_MSC_LED_PORT, PIN_MSC_LED); // LED on
     } else {
-        GPIO_SetBits(PIN_MSC_LED_PORT, PIN_MSC_LED);   // LED off
+        GPIO_ResetBits(PIN_MSC_LED_PORT, PIN_MSC_LED); // LED off
     }
 }
 

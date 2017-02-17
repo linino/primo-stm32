@@ -103,11 +103,13 @@ void gpio_init(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(ESP_PW_PORT, &GPIO_InitStructure);
+		GPIO_SetBits(ESP_PW_PORT, ESP_PW_PIN);
 		
 		GPIO_InitStructure.GPIO_Pin = ESP_EN_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(ESP_EN_PORT, &GPIO_InitStructure);
+		GPIO_ResetBits(ESP_EN_PORT, ESP_EN_PIN);
 		
 		GPIO_InitStructure.GPIO_Pin = ESP_0_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;

@@ -85,6 +85,8 @@ static U64 stk_main_task[MAIN_TASK_STACK / sizeof(U64)];
 void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
 void GPIO_USER2_BUTTON_SETUP(void);
+void WKUP_SETUP(void);
+void BAT_DET_SETUP(void);
 
 // Timer task, set flags every 30mS and 90mS
 __task void timer_task_30mS(void)
@@ -283,6 +285,8 @@ __task void main_task(void)
 		GPIO_GND_DETECT_SETUP();
 		GPIO_USER1_BUTTON_SETUP();
     GPIO_USER2_BUTTON_SETUP();
+		WKUP_SETUP();
+		BAT_DET_SETUP();
 		
 		if ((GND_DETECT_PORT->IDR & (1 << 2)))
 			Disable_External_SWD_Program();
@@ -576,4 +580,45 @@ void GPIO_USER2_BUTTON_SETUP(void)
   //NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
   //NVIC_Init(&NVIC_InitStructure); 
+}
+
+void WKUP_SETUP(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Enable the GPIO Clock */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
+	
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+  GPIO_InitStructure.GPIO_Pin = WKUP_PIN;
+  GPIO_Init(WKUP_PORT, &GPIO_InitStructure); 
+}
+
+void BAT_DET_SETUP(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+  EXTI_InitTypeDef EXTI_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+  
+  /* Enable the GPIO Clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+	
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+  GPIO_InitStructure.GPIO_Pin = BAT_DET_PIN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(BAT_DET_PORT, &GPIO_InitStructure);
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource12);
+
+  EXTI_InitStructure.EXTI_Line = EXTI_Line12;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+
+  NVIC_Init(&NVIC_InitStructure);  
 }

@@ -83,6 +83,8 @@ static U64 stk_serial_task[SERIAL_TASK_STACK / sizeof(U64)];
 static U64 stk_main_task[MAIN_TASK_STACK / sizeof(U64)];
 
 void GPIO_GND_DETECT_SETUP(void);
+void GPIO_USER1_BUTTON_SETUP(void);
+void GPIO_USER2_BUTTON_SETUP(void);
 
 // Timer task, set flags every 30mS and 90mS
 __task void timer_task_30mS(void)
@@ -279,6 +281,8 @@ __task void main_task(void)
     // leds
     gpio_init();
 		GPIO_GND_DETECT_SETUP();
+		GPIO_USER1_BUTTON_SETUP();
+    GPIO_USER2_BUTTON_SETUP();
 		
 		if ((GND_DETECT_PORT->IDR & (1 << 2)))
 			Disable_External_SWD_Program();
@@ -472,7 +476,7 @@ int main(void)
     os_sys_init_user(main_task, MAIN_TASK_PRIORITY, stk_main_task, MAIN_TASK_STACK);
 }
 
-void GPIO_GND_DETECT_SETUP()
+void GPIO_GND_DETECT_SETUP(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
   EXTI_InitTypeDef EXTI_InitStructure;
@@ -504,4 +508,72 @@ void GPIO_GND_DETECT_SETUP()
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
   NVIC_Init(&NVIC_InitStructure);  
+}
+
+void GPIO_USER1_BUTTON_SETUP(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+  EXTI_InitTypeDef EXTI_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+  
+  /* Enable the GPIO Clock */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+	
+	/* Configure Button pin as input floating */
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Pin = USER1_PIN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(USER1_PORT, &GPIO_InitStructure);
+	
+  /* Connect Button EXTI Line to Button GPIO Pin */
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource10);
+
+  /* Configure Button EXTI line */
+  EXTI_InitStructure.EXTI_Line = EXTI_Line10;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+
+  /* Enable and set Button EXTI Interrupt to the lowest priority */
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+
+  NVIC_Init(&NVIC_InitStructure);  
+}
+
+void GPIO_USER2_BUTTON_SETUP(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+  //EXTI_InitTypeDef EXTI_InitStructure;
+  //NVIC_InitTypeDef NVIC_InitStructure;
+  
+  /* Enable the GPIO Clock */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+	
+	/* Configure Button pin as input floating */
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Pin = USER2_PIN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(USER2_PORT, &GPIO_InitStructure);
+	
+  /* Connect Button EXTI Line to Button GPIO Pin */
+  //GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource4);
+
+  /* Configure Button EXTI line */
+  //EXTI_InitStructure.EXTI_Line = EXTI_Line4;
+  //EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  //EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;  
+  //EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  //EXTI_Init(&EXTI_InitStructure);
+
+  /* Enable and set Button EXTI Interrupt to the lowest priority */
+  //NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn ;
+  //NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	//NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  //NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+
+  //NVIC_Init(&NVIC_InitStructure); 
 }

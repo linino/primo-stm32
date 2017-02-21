@@ -84,6 +84,7 @@ static U64 stk_serial_task[SERIAL_TASK_STACK / sizeof(U64)];
 static U64 stk_main_task[MAIN_TASK_STACK / sizeof(U64)];
 
 __IO uint8_t KeyPressed = 0;
+__IO uint8_t BAT_Detect = 0;
 
 void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
@@ -291,15 +292,18 @@ __task void main_task(void)
 		WKUP_SETUP();
 		BAT_DET_SETUP();
 		
-		if ((GND_DETECT_PORT->IDR & (1 << 2)))
-			Disable_External_SWD_Program();
-		else
-			Enable_External_SWD_Program();
-		
+	if (!( BAT_DET_PORT->IDR & (1 << 12)))
+		StandbyRTCMode_Measure();
+			
+	if ((GND_DETECT_PORT->IDR & (1 << 2)))
+		Disable_External_SWD_Program();
+	else
+		Enable_External_SWD_Program();
+	
     // Turn on LED
     gpio_set_hid_led(GPIO_LED_ON);
     gpio_set_cdc_led(GPIO_LED_ON);
-    gpio_set_msc_led(GPIO_LED_ON);
+    gpio_set_msc_led(GPIO_LED_ON);		
     // Initialize the DAP
     DAP_Setup();
     // do some init with the target before USB and files are configured
@@ -319,12 +323,12 @@ __task void main_task(void)
 				
 			  if (KeyPressed == 1)	
 					SleepMode_Measure();
-				//else if (BAT_Detect == 1)	
-					//{
-						//RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-						//PWR_WakeUpPinCmd(ENABLE);
-						//StandbyRTCMode_Measure();
-					//}
+				else if (BAT_Detect == 1)	
+					{
+						RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+						PWR_WakeUpPinCmd(ENABLE);
+						StandbyRTCMode_Measure();
+					}
 					
         os_evt_wait_or(FLAGS_MAIN_RESET             // Put target in reset state
                        | FLAGS_MAIN_90MS            // 90mS tick
@@ -605,6 +609,9 @@ void WKUP_SETUP(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
   GPIO_InitStructure.GPIO_Pin = WKUP_PIN;
   GPIO_Init(WKUP_PORT, &GPIO_InitStructure); 
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+	PWR_WakeUpPinCmd(ENABLE);	
 }
 
 void BAT_DET_SETUP(void)

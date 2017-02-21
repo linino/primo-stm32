@@ -46,7 +46,7 @@
 //extern uint8_t I2C2_Buffer_Tx, I2C2_Buffer_Rx, CirReceiverData[], CirTransmitterData[];
 //extern __IO uint8_t CIR_Transmitter_Ready;
 extern __IO uint8_t KeyPressed ;
-//extern __IO uint8_t BAT_Detect ;
+extern __IO uint8_t BAT_Detect ;
 //extern __IO uint8_t ESP_Status ;
 
 __IO uint8_t GET_USER2_BUTTON = 0;
@@ -102,7 +102,7 @@ void EXTI15_10_IRQHandler(void)
   {
 		if ((GND_DETECT_PORT->IDR & (1 << 2)))
 			{
-				//BAT_Detect = 1;
+				BAT_Detect = 1;
 			}
     ///* Clear the USER Button EXTI line pending bit */
     EXTI_ClearITPendingBit(EXTI_Line12);

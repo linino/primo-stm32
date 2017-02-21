@@ -123,10 +123,17 @@ void SleepMode_Measure(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-			
-	PWR_WakeUpPinCmd(ENABLE);
 	
 	gpio_init();
+	GPIO_GND_DETECT_SETUP();
+	GPIO_USER1_BUTTON_SETUP();
+  GPIO_USER2_BUTTON_SETUP();
+	WKUP_SETUP();
+	
+	if ((GND_DETECT_PORT->IDR & (1 << 2)))
+		Disable_External_SWD_Program();
+	else
+		Enable_External_SWD_Program();
 	
 	usbd_connect(1);
 }

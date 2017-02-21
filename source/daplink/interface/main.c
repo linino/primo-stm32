@@ -180,15 +180,26 @@ void HardFault_Handler()
     while (1); // Wait for reset
 }
 
-void Enable_External_SWD_Program(void)
-{
-	SWD_PROG_PORT->BSRR = SWD_PROG_PIN;
-}
+void Enable_External_SWD_Program(void) 	{	SWD_PROG_PORT->BSRR = SWD_PROG_PIN;	}
+void Disable_External_SWD_Program(void)	{ SWD_PROG_PORT->BRR = SWD_PROG_PIN; }
 
-void Disable_External_SWD_Program(void)
-{
-	SWD_PROG_PORT->BRR = SWD_PROG_PIN;
-}
+void PowerOn_ESP() 				{ ESP_PW_PORT->BSRR   = ESP_PW_PIN; }
+void Poweroff_ESP() 			{ ESP_PW_PORT->BRR   = ESP_PW_PIN; }
+
+void Enable_ESP() 				{ ESP_EN_PORT->BRR   = ESP_EN_PIN; }
+void Disable_ESP()        { ESP_EN_PORT->BSRR   = ESP_EN_PIN; }
+
+void LedPowerOn(void)			{	POWER_EN_PORT->BSRR = POWER_EN_PIN;	}
+void LedPowerOff(void)		{	POWER_EN_PORT->BRR  = POWER_EN_PIN;	}
+void LedPowerToggle(void)	{	POWER_EN_PORT->ODR ^= POWER_EN_PIN;	}
+
+void LedUSER2On(void)			{	USER2_LED_PORT->BRR  = USER2_LED_PIN;	}
+void LedUSER2Off(void)		{	USER2_LED_PORT->BSRR = USER2_LED_PIN;	}
+void LedUSER2Toggle(void)	{	USER2_LED_PORT->ODR ^= USER2_LED_PIN;	}
+
+void LedBLEOn(void)				{	BLE_LED_PORT->BRR  = BLE_LED_PIN;	}
+void LedBLEOff(void)			{	BLE_LED_PORT->BSRR = BLE_LED_PIN;	}
+void LedBLEToggle(void)		{	BLE_LED_PORT->ODR ^= BLE_LED_PIN;	}
 
 os_mbx_declare(serial_mailbox, 20);
 #define SIZE_DATA (64)
@@ -292,6 +303,10 @@ __task void main_task(void)
 		WKUP_SETUP();
 		BAT_DET_SETUP();
 		
+		//disable and Power off ESP8266 for test 
+		Poweroff_ESP();
+		Disable_ESP();
+
 	if (!( BAT_DET_PORT->IDR & (1 << 12)))
 		StandbyRTCMode_Measure();
 			

@@ -45,7 +45,7 @@
 /* Private variables ---------------------------------------------------------*/
 //extern uint8_t I2C2_Buffer_Tx, I2C2_Buffer_Rx, CirReceiverData[], CirTransmitterData[];
 //extern __IO uint8_t CIR_Transmitter_Ready;
-//extern __IO uint8_t KeyPressed ;
+extern __IO uint8_t KeyPressed ;
 //extern __IO uint8_t BAT_Detect ;
 //extern __IO uint8_t ESP_Status ;
 
@@ -90,9 +90,9 @@ void EXTI15_10_IRQHandler(void)
 {
   if ((EXTI_GetITStatus(EXTI_Line10) != RESET))
   {  
-		NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
+		//NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
 		//NVIC_DisableIRQ(USART_IRQn);
-		//KeyPressed = 1;
+		KeyPressed = 1;
     ///* Clear the USER Button EXTI line pending bit */
     EXTI_ClearITPendingBit(EXTI_Line10);
 		//SleepMode_Measure();

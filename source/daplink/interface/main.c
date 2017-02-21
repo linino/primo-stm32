@@ -39,6 +39,7 @@
 #include "daplink.h"
 #include "util.h"
 #include "DAP.h"
+#include "stm32f10x_lp_modes.h"
 
 // Event flags for main task
 // Timers events
@@ -81,6 +82,8 @@ static U64 stk_timer_30_task[TIMER_TASK_30_STACK / sizeof(U64)];
 static U64 stk_dap_task[DAP_TASK_STACK / sizeof(U64)];
 static U64 stk_serial_task[SERIAL_TASK_STACK / sizeof(U64)];
 static U64 stk_main_task[MAIN_TASK_STACK / sizeof(U64)];
+
+__IO uint8_t KeyPressed = 0;
 
 void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
@@ -313,6 +316,16 @@ __task void main_task(void)
     os_tsk_create_user(timer_task_30mS, TIMER_TASK_30_PRIORITY, (void *)stk_timer_30_task, TIMER_TASK_30_STACK);
 
     while (1) {
+				
+			  if (KeyPressed == 1)	
+					SleepMode_Measure();
+				//else if (BAT_Detect == 1)	
+					//{
+						//RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+						//PWR_WakeUpPinCmd(ENABLE);
+						//StandbyRTCMode_Measure();
+					//}
+					
         os_evt_wait_or(FLAGS_MAIN_RESET             // Put target in reset state
                        | FLAGS_MAIN_90MS            // 90mS tick
                        | FLAGS_MAIN_30MS            // 30mS tick

@@ -180,12 +180,12 @@ void HardFault_Handler()
     while (1); // Wait for reset
 }
 
-void Enable_External_SWD_Program()
+void Enable_External_SWD_Program(void)
 {
 	SWD_PROG_PORT->BSRR = SWD_PROG_PIN;
 }
 
-void Disable_External_SWD_Program()
+void Disable_External_SWD_Program(void)
 {
 	SWD_PROG_PORT->BRR = SWD_PROG_PIN;
 }

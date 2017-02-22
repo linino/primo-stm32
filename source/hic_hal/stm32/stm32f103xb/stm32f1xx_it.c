@@ -289,27 +289,27 @@ void EXTI2_IRQHandler(void)
 
 void TIM2_IRQHandler()
 {
-    //if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
-			//{
-        //TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+    if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+			{
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         // Timeout
-        //ir_nec_reset_transmission();
-			//}
+        ir_nec_reset_transmission();
+			}
 }
 
 void EXTI3_IRQHandler(void)
 {
-    //static unsigned int counter;
+    static unsigned int counter;
 
     if (EXTI_GetITStatus(EXTI_Line3) != RESET)
     {
         u8 bit = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3);
 
         // Restart Timer
-        //counter = TIM_GetCounter(TIM2);
-        //TIM_SetCounter(TIM2, 0);
+        counter = TIM_GetCounter(TIM2);
+        TIM_SetCounter(TIM2, 0);
 			
-        //ir_nec_state_machine(counter);
+        ir_nec_state_machine(counter);
 
         EXTI_ClearITPendingBit(EXTI_Line3);
     }

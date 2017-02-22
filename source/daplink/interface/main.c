@@ -190,11 +190,11 @@ void HardFault_Handler()
 void Enable_External_SWD_Program(void) 	{	SWD_PROG_PORT->BSRR = SWD_PROG_PIN;	}
 void Disable_External_SWD_Program(void)	{ SWD_PROG_PORT->BRR = SWD_PROG_PIN; }
 
-void PowerOn_ESP() 				{ ESP_PW_PORT->BSRR   = ESP_PW_PIN; }
-void Poweroff_ESP() 			{ ESP_PW_PORT->BRR   = ESP_PW_PIN; }
+void PowerOn_ESP(void) 				{ ESP_PW_PORT->BSRR   = ESP_PW_PIN; }
+void Poweroff_ESP(void) 			{ ESP_PW_PORT->BRR   = ESP_PW_PIN; }
 
-void Enable_ESP() 				{ ESP_EN_PORT->BRR   = ESP_EN_PIN; }
-void Disable_ESP()        { ESP_EN_PORT->BSRR   = ESP_EN_PIN; }
+void Enable_ESP(void) 				{ ESP_EN_PORT->BRR   = ESP_EN_PIN; }
+void Disable_ESP(void)        { ESP_EN_PORT->BSRR   = ESP_EN_PIN; }
 
 void LedPowerOn(void)			{	POWER_EN_PORT->BSRR = POWER_EN_PIN;	}
 void LedPowerOff(void)		{	POWER_EN_PORT->BRR  = POWER_EN_PIN;	}

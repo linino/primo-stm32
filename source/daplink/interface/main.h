@@ -31,7 +31,9 @@ extern "C" {
 //I2C2 define
 #define I2C2_SLAVE_ADDRESS7     0x90
 #define ClockSpeed              100000
-#define DataSize      					4 
+#define DataSize      					4
+	
+#define F_TIM_CLK    						36000000
 	
 // LED state
 typedef enum main_led_state {
@@ -83,6 +85,10 @@ void Poweroff_ESP(void);
 void Enable_ESP(void);
 void Disable_ESP(void);
 void I2C2_GPIO_Configuration(void);
+void enableIRIn(void);
+void disableIRIn(void);
+void enableIROut(int);
+void disableIROut(void);
 
 
 

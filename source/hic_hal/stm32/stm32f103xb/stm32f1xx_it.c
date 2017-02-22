@@ -32,7 +32,8 @@
 #include "stm32f1xx_it.h"
 #include "stm32f10x_i2c.h"
 #include "DAP_config.h"
-
+#include "ir_receiver.h"
+#include "ir_transmitter.h"
 
 
 /** @addtogroup Template
@@ -200,19 +201,19 @@ void I2C2_EV_IRQHandler(void)
 						GPIO_USER1_BUTTON_SETUP();
 						break;
 					case CIR_ENABLE_RECIVER:
-						//enableIRIn();
+						enableIRIn();
 						break;
 					case CIR_DISABLE_RECIVER:
-						//disableIRIn();
+						disableIRIn();
 						break;
 					case CIR_RECEIVER:
 						SEND_REC_DATA = 1;
 						break;
 					case CIR_ENABLE_TRANSMITTER:
-						//enableIROut(38);
+						enableIROut(38);
 						break;
 					case CIR_DISABLE_TRANSMITTER:
-						//disableIROut();
+						disableIROut();
 						break;
 					case CIR_TRANSMITTER:
 						GET_TRAN_DATA = 1;
@@ -289,11 +290,11 @@ void EXTI2_IRQHandler(void)
 void TIM2_IRQHandler()
 {
     //if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
-    //{
+			//{
         //TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         // Timeout
         //ir_nec_reset_transmission();
-    //}
+			//}
 }
 
 void EXTI3_IRQHandler(void)

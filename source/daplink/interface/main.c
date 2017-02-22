@@ -41,6 +41,9 @@
 #include "DAP.h"
 #include "stm32f10x_lp_modes.h"
 #include "stm32f10x_i2c.h"
+//CIR Library
+#include "ir_transmitter.h"
+#include "ir_receiver.h"
 
 
 // Event flags for main task
@@ -98,6 +101,14 @@ void GPIO_USER1_BUTTON_SETUP(void);
 void GPIO_USER2_BUTTON_SETUP(void);
 void WKUP_SETUP(void);
 void BAT_DET_SETUP(void);
+void IR_Init(void);
+void IR_DeInit(void);
+void TIM_Init(void);
+void enableIRIn(void);
+void disableIRIn(void);
+void IR_Timer_PWM_ConfigFreqKHZ(unsigned char Khz);
+void enableIROut(int khz);
+void disableIROut(void);
 
 // Timer task, set flags every 30mS and 90mS
 __task void timer_task_30mS(void)
@@ -407,6 +418,17 @@ __task void main_task(void)
             // TODO: put the interface chip in sleep mode
             while (1);
         }
+				
+				if (CIR_Transmitter_Ready	== 1) {
+						unsigned long data;
+						data = 	(CirTransmitterData[0] << 24);
+						data |= (CirTransmitterData[1] << 16);
+						data |= (CirTransmitterData[2] <<  8);
+						data |=  CirTransmitterData[3];
+			
+						IR_SendNEC(data, 32);
+						CIR_Transmitter_Ready = 0;
+				}
 
         //if (flags & FLAGS_MAIN_DISABLEDEBUG) {
             // Disable debug
@@ -737,4 +759,147 @@ void I2C2_Configuration(void)
   I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
   I2C_InitStructure.I2C_ClockSpeed = ClockSpeed;
   I2C_Init(I2C2, &I2C_InitStructure); 
+}
+
+void IR_Init(void) {
+	// Use PA3 as input from IR receiver
+	GPIO_InitTypeDef GPIO_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+	EXTI_InitTypeDef EXTI_InitStructure;
+	
+	/* Enable GPIO clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	// Enable clock and its interrupts
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource3);
+	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  EXTI_InitStructure.EXTI_Line = EXTI_Line3;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+}
+
+void IR_DeInit(void) 
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+	EXTI_InitTypeDef EXTI_InitStructure;
+	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  EXTI_InitStructure.EXTI_Line = EXTI_Line3;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+  EXTI_Init(&EXTI_InitStructure);
+}
+
+void TIM_Init(void) 
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+	TIM_TimeBaseInitTypeDef TIM_InitStructure;
+	
+	TIM_DeInit(TIM2);
+	
+	// Enable clock and its interrupts
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
+	TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_InitStructure.TIM_Prescaler = 72- 1 ;
+	TIM_InitStructure.TIM_Period = 10000 - 1; // Update event every 10000 us / 10 ms
+	TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_InitStructure.TIM_RepetitionCounter = 0;
+	TIM_TimeBaseInit(TIM2, &TIM_InitStructure);
+	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+	TIM_Cmd(TIM2, ENABLE);
+}
+
+void enableIRIn(void)
+{
+ //CIR Init
+ IR_Init();
+ TIM_Init();
+ ir_nec_init(GPIO_Pin_3, GPIOA);
+}
+
+void disableIRIn(void)
+{
+ //CIR DeInit
+ IR_DeInit();
+}
+
+void IR_Timer_PWM_ConfigFreqKHZ(unsigned char Khz)
+{
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseInitStruct;
+    GPIO_InitTypeDef         GPIO_InitStructure;
+    TIM_OCInitTypeDef        TIM_OCInitStruct;
+    
+    TIM_DeInit(TIM2);
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    TIM_TimeBaseInitStruct.TIM_Prescaler = (72000000/F_TIM_CLK)-1;  //Prescaler=(2+1)=3,So here TIM clock is 48M/3=16M
+	  TIM_TimeBaseInitStruct.TIM_Period = F_TIM_CLK/(1000*Khz);
+    TIM_TimeBaseInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInitStruct.TIM_CounterMode = TIM_CounterMode_Up;  
+    TIM_TimeBaseInitStruct.TIM_RepetitionCounter = 0x00;
+    TIM_TimeBaseInit(TIM2,&TIM_TimeBaseInitStruct);
+
+    TIM_OCInitStruct.TIM_OCMode = TIM_OCMode_PWM1;
+    //TIM_OCInitStruct.TIM_OCIdleState = TIM_OCIdleState_Set;
+    //TIM_OCInitStruct.TIM_OCNIdleState = TIM_OCNIdleState_Reset;
+    //TIM_OCInitStruct.TIM_OCNPolarity = TIM_OCNPolarity_High;
+    TIM_OCInitStruct.TIM_OCPolarity = TIM_OCPolarity_High;
+    //TIM_OCInitStruct.TIM_OutputNState = TIM_OutputNState_Disable;
+    TIM_OCInitStruct.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStruct.TIM_Pulse = (F_TIM_CLK/(1000*Khz))/3;  //Duty is 50%
+
+    TIM_OC3Init(TIM2,&TIM_OCInitStruct);
+    
+    TIM_Cmd(TIM2,ENABLE);
+
+    IR_TimerPWMOutDisable(); 
+}
+
+void enableIROut(int khz)
+{
+    IR_Timer_PWM_ConfigFreqKHZ(khz);
+}
+
+void disableIROut(void)
+{
+		TIM_Cmd(TIM2,DISABLE);
 }

@@ -43,11 +43,11 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-//extern uint8_t I2C2_Buffer_Tx, I2C2_Buffer_Rx, CirReceiverData[], CirTransmitterData[];
-//extern __IO uint8_t CIR_Transmitter_Ready;
+extern uint8_t I2C2_Buffer_Tx, I2C2_Buffer_Rx, CirReceiverData[], CirTransmitterData[];
+extern __IO uint8_t CIR_Transmitter_Ready;
 extern __IO uint8_t KeyPressed ;
 extern __IO uint8_t BAT_Detect ;
-//extern __IO uint8_t ESP_Status ;
+
 
 __IO uint8_t GET_USER2_BUTTON = 0;
 __IO uint8_t USER2_BUTTON_STATUS = 0xFF;
@@ -84,7 +84,170 @@ __IO uint8_t cir_transmitter_count =0;
   * @}
   */ 
 
+/**
+  * @brief  This function handles I2C2 Event interrupt request.
+  * @param  None
+  * @retval None
+  */
+void I2C2_EV_IRQHandler(void)
+{
+	I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
+  switch (I2C_GetLastEvent(I2C2))
+  {
+    /* Slave Transmitter ---------------------------------------------------*/
+    case I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED:  /* EV1 */		
+      /* Transmit I2C2 data */
+			//I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
+			if ( GET_USER2_BUTTON == 1)
+				{
+					I2C_SendData(I2C2, USER2_BUTTON_STATUS);
+				}
+			else if (SEND_REC_DATA == 1)
+				{
+					I2C_SendData(I2C2, CirReceiverData[cir_reciver_count++]);
+				}
+				
+			break;
 
+    case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:             /* EV3 */
+      /* Transmit I2C2 data */
+			//I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
+			if ( GET_USER2_BUTTON == 1)
+				{
+					I2C_SendData(I2C2, USER2_BUTTON_STATUS);
+					GET_USER2_BUTTON = 0;
+					USER2_BUTTON_STATUS = 0xFF;
+				}
+			else if (SEND_REC_DATA == 1)
+				{
+					int i;
+					I2C_SendData(I2C2, CirReceiverData[cir_reciver_count++]);
+					if (cir_reciver_count == 4)
+						{
+							cir_reciver_count = 0;
+							SEND_REC_DATA = 0;
+							for (i=0;i<4;i++)
+								CirReceiverData[i] = 0;
+						}
+				}
+				
+			break; 
+  
+    /* Slave Receiver ------------------------------------------------------*/
+    case I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED:     /* EV1 */
+      break;
+
+    case I2C_EVENT_SLAVE_BYTE_RECEIVED:                /* EV2 */	
+			/* Store I2C2 received data */
+			if(GET_TRAN_DATA == 0)
+			{
+				I2C2_Buffer_Rx = I2C_ReceiveData(I2C2);
+				
+			}
+			else
+			{
+				CirTransmitterData[cir_transmitter_count++] = I2C_ReceiveData(I2C2);
+				if (cir_transmitter_count == 4)
+				{
+					GET_TRAN_DATA = 0;
+					cir_transmitter_count = 0;
+					CIR_Transmitter_Ready = 1;
+				}
+				return;
+			}
+			switch(I2C2_Buffer_Rx)
+				{
+					case USER2_LED_H:
+						LedUSER2On();
+						break;
+					case USER2_LED_L:
+						LedUSER2Off();
+						break;
+					case POWER_LED_H:
+						LedPowerOn();
+						break;
+					case POWER_LED_L:
+						LedPowerOff();
+						break;
+					case BLE_LED_H:
+						LedBLEOn();
+						break;
+					case BLE_LED_L:
+						LedBLEOff();
+						break;
+					case GPIO_ESP_PW_H:
+						PowerOn_ESP();
+						break;
+					case GPIO_ESP_PW_L:
+						Poweroff_ESP();
+						break;
+					case GPIO_ESP_EN_H:
+						Enable_ESP();
+						break;
+					case GPIO_ESP_EN_L:
+						Disable_ESP();
+						break;
+					case BATTERY_VOL_IN:
+						break;
+					case USER2_BUTTON_IN:
+						GET_USER2_BUTTON = 1;
+						if (USER2_PORT->IDR & (1 << 4))
+							USER2_BUTTON_STATUS = 0xC3;
+						else
+							USER2_BUTTON_STATUS = 0x3C;
+						break;
+					case GPIO_USER1_IT:
+						GPIO_USER1_BUTTON_SETUP();
+						break;
+					case CIR_ENABLE_RECIVER:
+						//enableIRIn();
+						break;
+					case CIR_DISABLE_RECIVER:
+						//disableIRIn();
+						break;
+					case CIR_RECEIVER:
+						SEND_REC_DATA = 1;
+						break;
+					case CIR_ENABLE_TRANSMITTER:
+						//enableIROut(38);
+						break;
+					case CIR_DISABLE_TRANSMITTER:
+						//disableIROut();
+						break;
+					case CIR_TRANSMITTER:
+						GET_TRAN_DATA = 1;
+						break;
+					default:
+						break;
+				}
+				
+			break;
+				
+    case I2C_EVENT_SLAVE_STOP_DETECTED:                /* EV4 */
+      /* Clear I2C2 STOPF flag: read of I2C_SR1 followed by a write on I2C_CR1 */
+		  I2C_SendData(I2C2, I2C2_Buffer_Tx);
+      (void)(I2C_GetITStatus(I2C2, I2C_IT_STOPF));
+      I2C_Cmd(I2C2, ENABLE);
+      break;
+   
+		case I2C_EVENT_SLAVE_ACK_FAILURE:
+			  /* Check on I2C2 AF flag and clear it */
+			I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
+			break;
+		
+    default:
+      break;
+  }
+}
+
+void I2C2_ER_IRQHandler(void)
+{
+  /* Check on I2C2 AF flag and clear it */
+  if (I2C_GetITStatus(I2C2, I2C_IT_AF)) 
+  {
+    I2C_ClearITPendingBit(I2C2, I2C_IT_AF);
+  }
+}
 
 void EXTI15_10_IRQHandler(void)
 {

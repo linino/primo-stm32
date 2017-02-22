@@ -126,7 +126,6 @@ void SleepMode_Measure(void)
 	
 	gpio_init();
 	GPIO_GND_DETECT_SETUP();
-	GPIO_USER1_BUTTON_SETUP();
   GPIO_USER2_BUTTON_SETUP();
 	WKUP_SETUP();
 	
@@ -134,6 +133,8 @@ void SleepMode_Measure(void)
 		Disable_External_SWD_Program();
 	else
 		Enable_External_SWD_Program();
+	
+	I2C2_GPIO_Configuration();
 	
 	usbd_connect(1);
 }

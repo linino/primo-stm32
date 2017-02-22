@@ -40,6 +40,8 @@
 #include "util.h"
 #include "DAP.h"
 #include "stm32f10x_lp_modes.h"
+#include "stm32f10x_i2c.h"
+
 
 // Event flags for main task
 // Timers events
@@ -83,6 +85,11 @@ static U64 stk_dap_task[DAP_TASK_STACK / sizeof(U64)];
 static U64 stk_serial_task[SERIAL_TASK_STACK / sizeof(U64)];
 static U64 stk_main_task[MAIN_TASK_STACK / sizeof(U64)];
 
+uint8_t I2C2_Buffer_Tx;
+uint8_t I2C2_Buffer_Rx;
+uint8_t CirReceiverData[DataSize];
+uint8_t CirTransmitterData[DataSize];
+__IO uint8_t CIR_Transmitter_Ready = 0;
 __IO uint8_t KeyPressed = 0;
 __IO uint8_t BAT_Detect = 0;
 
@@ -201,6 +208,11 @@ void LedBLEOn(void)				{	BLE_LED_PORT->BRR  = BLE_LED_PIN;	}
 void LedBLEOff(void)			{	BLE_LED_PORT->BSRR = BLE_LED_PIN;	}
 void LedBLEToggle(void)		{	BLE_LED_PORT->ODR ^= BLE_LED_PIN;	}
 
+void I2C2_RCC_Configuration(void);
+void I2C2_GPIO_Configuration(void);
+void I2C2_NVIC_Configuration(void);
+void I2C2_Configuration(void);
+
 os_mbx_declare(serial_mailbox, 20);
 #define SIZE_DATA (64)
 static uint8_t data[SIZE_DATA];
@@ -298,7 +310,7 @@ __task void main_task(void)
     // leds
     gpio_init();
 		GPIO_GND_DETECT_SETUP();
-		GPIO_USER1_BUTTON_SETUP();
+		//GPIO_USER1_BUTTON_SETUP();
     GPIO_USER2_BUTTON_SETUP();
 		WKUP_SETUP();
 		BAT_DET_SETUP();
@@ -307,13 +319,32 @@ __task void main_task(void)
 		Poweroff_ESP();
 		Disable_ESP();
 
-	if (!( BAT_DET_PORT->IDR & (1 << 12)))
-		StandbyRTCMode_Measure();
+		if (!( BAT_DET_PORT->IDR & (1 << 12)))
+			StandbyRTCMode_Measure();
 			
-	if ((GND_DETECT_PORT->IDR & (1 << 2)))
-		Disable_External_SWD_Program();
-	else
-		Enable_External_SWD_Program();
+		if ((GND_DETECT_PORT->IDR & (1 << 2)))
+			Disable_External_SWD_Program();
+		else
+			Enable_External_SWD_Program();
+		
+		//I2c slave mode
+		/* System clocks configuration ---------------------------------------------*/
+		I2C2_RCC_Configuration();
+
+		/* NVIC configuration ------------------------------------------------------*/
+		I2C2_NVIC_Configuration();
+
+		/* GPIO configuration ------------------------------------------------------*/
+		I2C2_GPIO_Configuration();
+  
+		/* Enable I2C2 ----------------------------------------------------*/
+		I2C_Cmd(I2C2, ENABLE);
+	
+		/* I2C2 configuration ------------------------------------------------------*/
+		I2C2_Configuration(); 
+
+		/* Enable I2C2 event and buffer interrupts */
+		I2C_ITConfig(I2C2, I2C_IT_EVT | I2C_IT_BUF, ENABLE);
 	
     // Turn on LED
     gpio_set_hid_led(GPIO_LED_ON);
@@ -656,4 +687,54 @@ void BAT_DET_SETUP(void)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
   NVIC_Init(&NVIC_InitStructure);  
+}
+
+void I2C2_RCC_Configuration(void)
+{	
+  /* Enable I2C2 clock */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+  /* Enable GPIOB clock */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+}
+
+void I2C2_GPIO_Configuration(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Configure I2C2 pins: SCL and SDA ----------------------------------------*/
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+void I2C2_NVIC_Configuration(void)
+{
+ // NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+  
+  /* Configure and enable I2C2 event interrupt -------------------------------*/
+	NVIC_InitTypeDef  NVIC_InitStructure;
+  NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd =ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  /* Configure and enable I2C2 error interrupt -------------------------------*/  
+  NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_Init(&NVIC_InitStructure);
+}
+
+void I2C2_Configuration(void)
+{
+		/* I2C2 configuration ------------------------------------------------------*/
+	I2C_InitTypeDef   I2C_InitStructure;
+  I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+  I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+  I2C_InitStructure.I2C_OwnAddress1 = I2C2_SLAVE_ADDRESS7;
+  I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+  I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+  I2C_InitStructure.I2C_ClockSpeed = ClockSpeed;
+  I2C_Init(I2C2, &I2C_InitStructure); 
 }

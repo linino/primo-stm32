@@ -28,6 +28,11 @@
 extern "C" {
 #endif
 
+//I2C2 define
+#define I2C2_SLAVE_ADDRESS7     0x90
+#define ClockSpeed              100000
+#define DataSize      					4 
+	
 // LED state
 typedef enum main_led_state {
     MAIN_LED_OFF = 0,
@@ -67,6 +72,18 @@ void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
 void GPIO_USER2_BUTTON_SETUP(void);
 void WKUP_SETUP(void);
+void LedPowerOn(void);
+void LedPowerOff(void);
+void LedUSER2On(void);
+void LedUSER2Off(void);
+void LedBLEOn(void);
+void LedBLEOff(void);
+void PowerOn_ESP(void);
+void Poweroff_ESP(void);
+void Enable_ESP(void);
+void Disable_ESP(void);
+void I2C2_GPIO_Configuration(void);
+
 
 
 #ifdef __cplusplus

@@ -43,21 +43,9 @@
 #define GPIO_ESP_PW_L 	0xE9
 #define GPIO_ESP_EN_H 	0xEA
 #define GPIO_ESP_EN_L 	0xEB
-#define USB_CONNECT_H 	0xEC
-#define USB_CONNECT_L 	0xED
+#define BATTERY_VOL_IN 	0xEC
 #define USER2_BUTTON_IN 0xEE
-#define GPIO_USER1_IN 	0xEF
-#define GPIO_ESP_0_IN 	0xF0
-#define GPIO_ESP_4_IN 	0xF1
-#define GPIO_ESP_12_IN 	0xF2
-#define GPIO_ESP_13_IN 	0xF3
-#define GPIO_ESP_14_IN 	0xF4
-#define BATTERY_VOL_IN 	0xF5
-#define IrDA_OUT 				0xF6
-#define IrDA_IN 				0xF7
 #define GPIO_USER1_IT 	0xF8
-
-#define USER2_BUTTON_IN 0xEE
 
 #define CIR_ENABLE_RECIVER	  		0xA0
 #define CIR_DISABLE_RECIVER 			0xA1

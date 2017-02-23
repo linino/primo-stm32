@@ -65,7 +65,7 @@ static ring_buf_t write_buffer, read_buffer;
 static uint32_t tx_in_progress = 0;
 
 static UART_Configuration configuration = {
-    .Baudrate = 9600,
+    .Baudrate = 115200,
     .DataBits = UART_DATA_BITS_8,
     .Parity = UART_PARITY_NONE,
     .StopBits = UART_STOP_BITS_1,

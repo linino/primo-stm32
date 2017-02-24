@@ -380,7 +380,8 @@ __task void main_task(void)
 				
 			  if (KeyPressed == 1)	
 					SleepMode_Measure();
-				else if (BAT_Detect == 1)	
+				
+				if (BAT_Detect == 1)	
 					{
 						RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
 						PWR_WakeUpPinCmd(ENABLE);

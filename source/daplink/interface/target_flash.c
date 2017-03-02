@@ -56,9 +56,9 @@ static error_t target_flash_init()
 {
     const program_target_t *const flash = target_device.flash_algo;
 
-    //if (0 == target_set_state(RESET_PROGRAM)) {
-        //return ERROR_RESET;
-    //}
+    if (0 == target_set_state(RESET_PROGRAM)) {
+        return ERROR_RESET;
+    }
 
     // Download flash programming algorithm to target and initialise.
     if (0 == swd_write_memory(flash->algo_start, (uint8_t *)flash->algo_blob, flash->algo_size)) {
@@ -75,9 +75,9 @@ static error_t target_flash_init()
 static error_t target_flash_uninit(void)
 {
     // Resume the target if configured to do so
-    //if (config_get_auto_rst()) {
-        //target_set_state(RESET_RUN);
-    //}
+    if (config_get_auto_rst()) {
+        target_set_state(RESET_RUN);
+    }
 
     swd_off();
     return ERROR_SUCCESS;

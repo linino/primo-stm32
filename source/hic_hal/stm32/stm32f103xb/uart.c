@@ -24,6 +24,8 @@
 #include "stm32f10x.h"
 #include "uart.h"
 #include "gpio.h"
+#include "util.h"
+#include "cortex_m.h"
 
 // For usart
 #define CDC_UART                     USART1
@@ -61,8 +63,6 @@ typedef struct {
 }ring_buf_t;
 
 static ring_buf_t write_buffer, read_buffer;
-
-static uint32_t tx_in_progress = 0;
 
 static UART_Configuration configuration = {
     .Baudrate = 115200,
@@ -194,7 +194,6 @@ int32_t uart_uninitialize(void)
 int32_t uart_reset(void)
 {
     uart_initialize();
-    tx_in_progress = 0;
     return 1;
 }
 
@@ -277,6 +276,7 @@ int32_t uart_write_free(void)
 int32_t uart_write_data(uint8_t *data, uint16_t size)
 {
     uint32_t cnt, len;
+		cortex_int_state_t state;
 
     if(size == 0)
         return 0;
@@ -291,18 +291,13 @@ int32_t uart_write_data(uint8_t *data, uint16_t size)
         if(write_buffer.head >= BUFFER_SIZE)
             write_buffer.head = 0;
     }
-
-    if(!tx_in_progress) {
-        // Wait for tx is free
-        //while(USART_GetITStatus(CDC_UART, USART_IT_TXE) == RESET);
-
-        tx_in_progress = 1;
-        USART_SendData(CDC_UART, write_buffer.data[write_buffer.tail++]);
-        if(write_buffer.tail >= BUFFER_SIZE)
-            write_buffer.tail = 0;
-        // Enale tx interrupt
-        USART_ITConfig(CDC_UART, USART_IT_TXE, ENABLE);
-    }
+		
+		// Atomically enable TX
+    state = cortex_int_get_and_disable();
+		if ( write_buffer.head != write_buffer.tail) {
+			USART_ITConfig(CDC_UART, USART_IT_TXE, ENABLE);
+		}
+		cortex_int_restore(state);
 
     return cnt;
 }
@@ -354,16 +349,13 @@ void CDC_UART_IRQn_Handler(void)
 
     if(USART_GetITStatus(CDC_UART, USART_IT_TXE) != RESET) {
         USART_ClearITPendingBit(CDC_UART, USART_IT_TXE);
-        cnt = read_available(&write_buffer);
-        if(cnt == 0) {
-            USART_ITConfig(CDC_UART, USART_IT_TXE, DISABLE);
-            tx_in_progress = 0;
-        }
-        else {
-            USART_SendData(CDC_UART, write_buffer.data[write_buffer.tail++]);
-            if(write_buffer.tail >= BUFFER_SIZE)
-                write_buffer.tail = 0;
-            tx_in_progress = 1;
-        }
+				util_assert(write_buffer.head != write_buffer.tail);
+				USART_SendData(CDC_UART, write_buffer.data[write_buffer.tail++]);
+        if(write_buffer.tail >= BUFFER_SIZE)
+            write_buffer.tail = 0;
+				if(write_buffer.head == write_buffer.tail) {
+					USART_ITConfig(CDC_UART, USART_IT_TXE, DISABLE);
+				}
+
     }
 }

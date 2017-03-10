@@ -120,6 +120,11 @@ void gpio_init(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(ESP_4_PORT, &GPIO_InitStructure);
+		
+		GPIO_InitStructure.GPIO_Pin = USER2_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(USER2_PORT, &GPIO_InitStructure);
 
 
     // Keep powered off in bootloader mode
@@ -179,6 +184,17 @@ void gpio_set_msc_led(gpio_led_state_t state)
     }
 }
 
+
+void gpio_set_user2_led(gpio_led_state_t state)
+{
+    //gpio_set_hid_led(state);
+    if (state) {
+        GPIO_ResetBits(USER2_LED_PORT, USER2_LED_PIN); // LED on
+    } else {
+        GPIO_SetBits(USER2_LED_PORT, USER2_LED_PIN); // LED off
+    }
+}
+
 uint8_t gpio_get_sw_reset(void)
 {
     static uint8_t last_reset_forward_pressed = 0;
@@ -211,6 +227,12 @@ uint8_t gpio_get_sw_reset(void)
 
     return !reset_pressed;
 }
+
+uint8_t gpio_get_user_button_pressed(void)
+{
+    return ((USER2_PORT->IDR & USER2_PIN) ? 0 : 1);
+}
+
 
 uint8_t GPIOGetButtonState(void)
 {

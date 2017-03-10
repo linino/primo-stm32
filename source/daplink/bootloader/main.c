@@ -235,13 +235,14 @@ int main(void)
 
     // check for invalid app image or rst button press. Should be checksum or CRC but NVIC validation is better than nothing.
     // If the interface has set the hold in bootloader setting don't jump to app
-    if (gpio_get_sw_reset() && validate_bin_nvic((uint8_t *)target_device.flash_start) && !config_ram_get_initial_hold_in_bl()) {
+    if (!gpio_get_user_button_pressed() && validate_bin_nvic((uint8_t *)target_device.flash_start) && !config_ram_get_initial_hold_in_bl()) {
         // change to the new vector table
         SCB->VTOR = target_device.flash_start;
         // modify stack pointer and start app
         modify_stack_pointer_and_start_app((*(uint32_t *)(target_device.flash_start)), (*(uint32_t *)(target_device.flash_start + 4)));
+			
     }
-
+		gpio_set_user2_led(GPIO_LED_ON);
     // config the usb interface descriptor and web auth token before USB connects
     //unique_string_auth_config();
     // either the rst pin was pressed or we have an empty app region

@@ -48,8 +48,12 @@
 //   </h>
 #define USBD_POWER                  0
 #define USBD_MAX_PACKET0            64
-#define USBD_DEVDESC_IDVENDOR       0x0D28
-#define USBD_DEVDESC_IDPRODUCT      0x0204
+#define USBD_DEVDESC_IDVENDOR       0x2a03
+#if defined(DAPLINK_BL)
+#define USBD_DEVDESC_IDPRODUCT      0x005a
+#elif defined(DAPLINK_IF)
+#define USBD_DEVDESC_IDPRODUCT      0x805a
+#endif
 #define USBD_DEVDESC_BCDDEVICE      0x0100 //was 0x0100
 
 //   <h> Configuration Settings

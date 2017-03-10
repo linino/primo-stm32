@@ -33,7 +33,6 @@ __attribute__((weak))
 const vfs_filename_t daplink_url_name =       "MBED    HTM";
 __attribute__((weak))
 const vfs_filename_t daplink_drive_name =     "(+|-)PRIMO ";
-//const vfs_filename_t daplink_drive_name =   "DAPLINK    ";
 __attribute__((weak))
 const char *const daplink_target_url = "https://mbed.org/device/?code=@U?version=@V?target_id=@T";
 

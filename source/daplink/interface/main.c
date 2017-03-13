@@ -325,10 +325,8 @@ __task void main_task(void)
     GPIO_USER2_BUTTON_SETUP();
 		WKUP_SETUP();
 		BAT_DET_SETUP();
-		
-		//disable and Power off ESP8266 for test 
-		Poweroff_ESP();
-		Disable_ESP();
+		PowerOn_ESP();
+		Enable_ESP();
 
 		if (!( BAT_DET_PORT->IDR & (1 << 12)))
 			StandbyRTCMode_Measure();

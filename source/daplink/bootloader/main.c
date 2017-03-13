@@ -232,6 +232,8 @@ int main(void)
     gpio_init();
     // init settings
     config_init();
+    // Allow External programmer connect to nRF52 via SWD
+    Disable_External_SWD_Program();
 
     // check for invalid app image or rst button press. Should be checksum or CRC but NVIC validation is better than nothing.
     // If the interface has set the hold in bootloader setting don't jump to app

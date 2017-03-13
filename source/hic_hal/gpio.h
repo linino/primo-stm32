@@ -35,6 +35,8 @@ typedef enum led_state {
 } gpio_led_state_t;
 
 void gpio_init(void);
+void Enable_External_SWD_Program(void);
+void Disable_External_SWD_Program(void);
 void gpio_set_hid_led(gpio_led_state_t state);
 void gpio_set_cdc_led(gpio_led_state_t state);
 void gpio_set_msc_led(gpio_led_state_t state);

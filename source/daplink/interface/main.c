@@ -198,9 +198,6 @@ void HardFault_Handler()
     while (1); // Wait for reset
 }
 
-void Enable_External_SWD_Program(void) 	{	SWD_PROG_PORT->BSRR = SWD_PROG_PIN;	}
-void Disable_External_SWD_Program(void)	{ SWD_PROG_PORT->BRR = SWD_PROG_PIN; }
-
 void PowerOn_ESP(void) 				{ ESP_PW_PORT->BSRR   = ESP_PW_PIN; }
 void Poweroff_ESP(void) 			{ ESP_PW_PORT->BRR   = ESP_PW_PIN; }
 

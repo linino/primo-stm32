@@ -243,3 +243,13 @@ void target_forward_reset(bool assert_reset)
 {
     // Do nothing - reset is forwarded in gpio_get_sw_reset
 }
+
+void Enable_External_SWD_Program(void) 	
+{
+    SWD_PROG_PORT->BSRR = SWD_PROG_PIN;
+}
+
+void Disable_External_SWD_Program(void)	
+{ 
+    SWD_PROG_PORT->BRR = SWD_PROG_PIN; 
+}

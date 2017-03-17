@@ -111,7 +111,7 @@ SUPPORTED_CONFIGURATIONS = [
     (   0x1101,     'stm32f103xb_rblnano2_if',          				'sam3u2c_bl',       'Nordic-nRF52-DK'                       ),
     (   0x1101,     'stm32f103xb_rblnano_if',          				  'sam3u2c_bl',       'Nordic-nRF52-DK'                       ),  
     (   0x1101,     'stm32f103xb_primo_if',          						None,       				'Nordic-nRF52-DK'                       ),
-    (   0x1102,     'stm32f103xb_primo_if',          						None,       				'Arduino-Primo',						            ),
+    (   0x1102,     'stm32f103xb_primo_if',          						'stm32f103xb_bl',   'Arduino-Primo',						            ),
     (   0x1021,     'lpc11u35_ssci_chibi_if',                   None,               None                                    ), # TODO - set target to 'SSCI-MBIT' when mbed-os supports this
     (   0x1021,     'lpc11u35_efm32gg_stk_if',                   None,              None                                    ), # TODO - set target to 'SSCI-MBIT' when mbed-os supports this
     (   0x1114,     'lpc11u35_ssci1114_if',                     None,               'LPC1114FN28'                           ),

@@ -21,7 +21,7 @@
 
 #include "target_config.h"
 
-const char *board_id = "0000";
+const char *board_id = "1102";
 
 // stm32f103 target information
 const target_cfg_t target_device = {

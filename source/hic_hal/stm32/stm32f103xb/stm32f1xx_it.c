@@ -34,6 +34,7 @@
 #include "DAP_config.h"
 #include "ir_receiver.h"
 #include "ir_transmitter.h"
+#include "stm32f10x_adc.h"
 
 
 /** @addtogroup Template
@@ -55,8 +56,12 @@ __IO uint8_t USER2_BUTTON_STATUS = 0xFF;
 __IO uint8_t SEND_REC_FLAG = 0;
 __IO uint8_t SEND_REC_DATA = 0;
 __IO uint8_t GET_TRAN_DATA = 0;
+__IO uint8_t GET_BAT_VOL = 0;
 __IO uint8_t cir_reciver_count =0;
 __IO uint8_t cir_transmitter_count =0;
+__IO uint8_t bat_transfer_count =0;
+__IO uint32_t GET_BAT_VALUE = 0;
+__IO uint8_t BAT_ADC_VALUE[4];
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -107,7 +112,17 @@ void I2C2_EV_IRQHandler(void)
 				{
 					I2C_SendData(I2C2, CirReceiverData[cir_reciver_count++]);
 				}
-				
+			else if (GET_BAT_VOL == 1)
+				{
+					GET_BAT_VALUE = ADC_GetConversionValue(ADC1);
+
+					BAT_ADC_VALUE[0] = (GET_BAT_VALUE >> 24);
+					BAT_ADC_VALUE[1] = (GET_BAT_VALUE >> 16);
+					BAT_ADC_VALUE[2] = (GET_BAT_VALUE >> 8);
+					BAT_ADC_VALUE[3] = (GET_BAT_VALUE);
+
+					I2C_SendData(I2C2, BAT_ADC_VALUE[bat_transfer_count++]);
+				}
 			break;
 
     case I2C_EVENT_SLAVE_BYTE_TRANSMITTED:             /* EV3 */
@@ -131,7 +146,18 @@ void I2C2_EV_IRQHandler(void)
 								CirReceiverData[i] = 0;
 						}
 				}
-				
+			else if (GET_BAT_VOL == 1)
+				{
+					int i;
+					I2C_SendData(I2C2, BAT_ADC_VALUE[bat_transfer_count++]);
+					if (bat_transfer_count == 4)
+						{
+							bat_transfer_count = 0;
+							GET_BAT_VOL = 0;
+							for (i=0;i<4;i++)
+								BAT_ADC_VALUE[i] = 0;
+						}
+				}
 			break; 
   
     /* Slave Receiver ------------------------------------------------------*/
@@ -189,6 +215,7 @@ void I2C2_EV_IRQHandler(void)
 						Disable_ESP();
 						break;
 					case BATTERY_VOL_IN:
+						GET_BAT_VOL = 1;
 						break;
 					case USER2_BUTTON_IN:
 						GET_USER2_BUTTON = 1;

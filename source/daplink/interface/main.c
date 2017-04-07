@@ -353,7 +353,10 @@ __task void main_task(void)
 
 		/* Enable I2C2 event and buffer interrupts */
 		I2C_ITConfig(I2C2, I2C_IT_EVT | I2C_IT_BUF, ENABLE);
-	
+
+		/* Enable ADC Conversion */
+		ADC_Configuration();
+
     // Turn on LED
     gpio_set_hid_led(GPIO_LED_ON);
     gpio_set_cdc_led(GPIO_LED_ON);
@@ -898,6 +901,7 @@ void disableIROut(void)
 {
 		TIM_Cmd(TIM2,DISABLE);
 }
+
 void ADC_Configuration(void)
 {
 		ADC_InitTypeDef ADC_InitStructure;

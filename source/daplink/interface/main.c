@@ -300,6 +300,16 @@ __attribute__((weak)) void prerun_target_config(void) {}
 
 __task void main_task(void)
 {
+	  //Power on and Enable ESP8266
+		PowerOn_ESP();
+		Enable_ESP();
+		//I2c slave mode
+		I2C2_RCC_Configuration();
+		I2C2_NVIC_Configuration();
+		I2C2_GPIO_Configuration();
+		I2C_Cmd(I2C2, ENABLE);
+		I2C2_Configuration(); 
+		I2C_ITConfig(I2C2, I2C_IT_EVT | I2C_IT_BUF, ENABLE);
     // State processing
     uint16_t flags = 0;
     // LED
@@ -325,32 +335,14 @@ __task void main_task(void)
     GPIO_USER2_BUTTON_SETUP();
 		WKUP_SETUP();
 		BAT_DET_SETUP();
-		PowerOn_ESP();
-		Enable_ESP();
+		
+		if ((!(BAT_DET_PORT->IDR & (1 << 12))) & (Disable_StandbyMode == 0))
+			StandbyRTCMode_Measure();
 
 		if ((GND_DETECT_PORT->IDR & (1 << 2)))
 			Disable_External_SWD_Program();
 		else
 			Enable_External_SWD_Program();
-		
-		//I2c slave mode
-		/* System clocks configuration ---------------------------------------------*/
-		I2C2_RCC_Configuration();
-
-		/* NVIC configuration ------------------------------------------------------*/
-		I2C2_NVIC_Configuration();
-
-		/* GPIO configuration ------------------------------------------------------*/
-		I2C2_GPIO_Configuration();
-  
-		/* Enable I2C2 ----------------------------------------------------*/
-		I2C_Cmd(I2C2, ENABLE);
-	
-		/* I2C2 configuration ------------------------------------------------------*/
-		I2C2_Configuration(); 
-
-		/* Enable I2C2 event and buffer interrupts */
-		I2C_ITConfig(I2C2, I2C_IT_EVT | I2C_IT_BUF, ENABLE);
 
 		/* Enable ADC Conversion */
 		ADC_Configuration();
@@ -373,9 +365,6 @@ __task void main_task(void)
     usb_state_count = USB_CONNECT_DELAY;
     // Start timer tasks
     os_tsk_create_user(timer_task_30mS, TIMER_TASK_30_PRIORITY, (void *)stk_timer_30_task, TIMER_TASK_30_STACK);
-
-	 if ((!(BAT_DET_PORT->IDR & (1 << 12))) & (Disable_StandbyMode == 0))
-			StandbyRTCMode_Measure();
 
     while (1) {
 				

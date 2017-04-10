@@ -49,6 +49,7 @@ extern uint8_t I2C2_Buffer_Tx, I2C2_Buffer_Rx, CirReceiverData[], CirTransmitter
 extern __IO uint8_t CIR_Transmitter_Ready;
 extern __IO uint8_t KeyPressed ;
 extern __IO uint8_t BAT_Detect ;
+extern __IO uint8_t Disable_StandbyMode;
 
 
 __IO uint8_t GET_USER2_BUTTON = 0;
@@ -213,6 +214,9 @@ void I2C2_EV_IRQHandler(void)
 						break;
 					case GPIO_ESP_EN_L:
 						Disable_ESP();
+						break;
+					case BAT_VOLT_IN:
+						Disable_StandbyMode = 1;
 						break;
 					case GET_BAT_VOLT_ADC:
 						GET_BAT_VOLT = 1;

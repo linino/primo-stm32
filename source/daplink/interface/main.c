@@ -96,6 +96,7 @@ uint8_t CirTransmitterData[DataSize];
 __IO uint8_t CIR_Transmitter_Ready = 0;
 __IO uint8_t KeyPressed = 0;
 __IO uint8_t BAT_Detect = 0;
+__IO uint8_t Disable_StandbyMode = 0;
 
 void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
@@ -327,9 +328,6 @@ __task void main_task(void)
 		PowerOn_ESP();
 		Enable_ESP();
 
-		if (!( BAT_DET_PORT->IDR & (1 << 12)))
-			StandbyRTCMode_Measure();
-			
 		if ((GND_DETECT_PORT->IDR & (1 << 2)))
 			Disable_External_SWD_Program();
 		else
@@ -376,17 +374,21 @@ __task void main_task(void)
     // Start timer tasks
     os_tsk_create_user(timer_task_30mS, TIMER_TASK_30_PRIORITY, (void *)stk_timer_30_task, TIMER_TASK_30_STACK);
 
+	 if ((!(BAT_DET_PORT->IDR & (1 << 12))) & (Disable_StandbyMode == 0))
+			StandbyRTCMode_Measure();
+
     while (1) {
 				
 			  if (KeyPressed == 1)	
 					SleepMode_Measure();
 				
-				if (BAT_Detect == 1)	
-					{
+				if (BAT_Detect == 1) {
+					if (Disable_StandbyMode == 0) {
 						RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
 						PWR_WakeUpPinCmd(ENABLE);
 						StandbyRTCMode_Measure();
 					}
+				}
 					
         os_evt_wait_or(FLAGS_MAIN_RESET             // Put target in reset state
                        | FLAGS_MAIN_90MS            // 90mS tick

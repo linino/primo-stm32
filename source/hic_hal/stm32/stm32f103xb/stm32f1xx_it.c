@@ -214,7 +214,7 @@ void I2C2_EV_IRQHandler(void)
 					case GPIO_ESP_EN_L:
 						Disable_ESP();
 						break;
-					case BAT_VOLT_IN:
+					case GET_BAT_VOLT_ADC:
 						GET_BAT_VOLT = 1;
 						break;
 					case USER2_BUTTON_IN:

@@ -33,19 +33,20 @@
  extern "C" {
 #endif 
 	 
-#define USER2_LED_H 		0xE2
-#define USER2_LED_L 		0xE3
-#define POWER_LED_H 		0xE4
-#define POWER_LED_L 		0xE5
-#define BLE_LED_H 			0xE6
-#define BLE_LED_L 			0xE7
-#define GPIO_ESP_PW_H 	0xE8
-#define GPIO_ESP_PW_L 	0xE9
-#define GPIO_ESP_EN_H 	0xEA
-#define GPIO_ESP_EN_L 	0xEB
-#define BAT_VOLT_IN 		0xEC
-#define USER2_BUTTON_IN 0xEE
-#define GPIO_USER1_IT 	0xF8
+#define USER2_LED_H 			0xE2
+#define USER2_LED_L 			0xE3
+#define POWER_LED_H 			0xE4
+#define POWER_LED_L 			0xE5
+#define BLE_LED_H 				0xE6
+#define BLE_LED_L 				0xE7
+#define GPIO_ESP_PW_H 		0xE8
+#define GPIO_ESP_PW_L 		0xE9
+#define GPIO_ESP_EN_H 		0xEA
+#define GPIO_ESP_EN_L 		0xEB
+#define BAT_VOLT_IN 			0xEC
+#define GET_BAT_VOLT_ADC	0xED
+#define USER2_BUTTON_IN 	0xEE
+#define GPIO_USER1_IT 		0xF8
 
 #define CIR_ENABLE_RECIVER	  		0xA0
 #define CIR_DISABLE_RECIVER 			0xA1

@@ -56,12 +56,12 @@ __IO uint8_t USER2_BUTTON_STATUS = 0xFF;
 __IO uint8_t SEND_REC_FLAG = 0;
 __IO uint8_t SEND_REC_DATA = 0;
 __IO uint8_t GET_TRAN_DATA = 0;
-__IO uint8_t GET_BAT_VOL = 0;
+__IO uint8_t GET_BAT_VOLT = 0;
 __IO uint8_t cir_reciver_count =0;
 __IO uint8_t cir_transmitter_count =0;
 __IO uint8_t bat_transfer_count =0;
-__IO uint32_t GET_BAT_VALUE = 0;
-__IO uint8_t BAT_ADC_VALUE[4];
+__IO uint32_t BAT_VOLT_ADC = 0;
+__IO uint8_t BAT_VOLT_ADC_ARRAY[4];
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,16 +112,16 @@ void I2C2_EV_IRQHandler(void)
 				{
 					I2C_SendData(I2C2, CirReceiverData[cir_reciver_count++]);
 				}
-			else if (GET_BAT_VOL == 1)
+			else if (GET_BAT_VOLT == 1)
 				{
-					GET_BAT_VALUE = ADC_GetConversionValue(ADC1);
+					BAT_VOLT_ADC = ADC_GetConversionValue(ADC1);
 
-					BAT_ADC_VALUE[0] = (GET_BAT_VALUE >> 24);
-					BAT_ADC_VALUE[1] = (GET_BAT_VALUE >> 16);
-					BAT_ADC_VALUE[2] = (GET_BAT_VALUE >> 8);
-					BAT_ADC_VALUE[3] = (GET_BAT_VALUE);
+					BAT_VOLT_ADC_ARRAY[0] = (BAT_VOLT_ADC >> 24);
+					BAT_VOLT_ADC_ARRAY[1] = (BAT_VOLT_ADC >> 16);
+					BAT_VOLT_ADC_ARRAY[2] = (BAT_VOLT_ADC >> 8);
+					BAT_VOLT_ADC_ARRAY[3] = (BAT_VOLT_ADC);
 
-					I2C_SendData(I2C2, BAT_ADC_VALUE[bat_transfer_count++]);
+					I2C_SendData(I2C2, BAT_VOLT_ADC_ARRAY[bat_transfer_count++]);
 				}
 			break;
 
@@ -146,16 +146,16 @@ void I2C2_EV_IRQHandler(void)
 								CirReceiverData[i] = 0;
 						}
 				}
-			else if (GET_BAT_VOL == 1)
+			else if (GET_BAT_VOLT == 1)
 				{
 					int i;
-					I2C_SendData(I2C2, BAT_ADC_VALUE[bat_transfer_count++]);
+					I2C_SendData(I2C2, BAT_VOLT_ADC_ARRAY[bat_transfer_count++]);
 					if (bat_transfer_count == 4)
 						{
 							bat_transfer_count = 0;
-							GET_BAT_VOL = 0;
+							GET_BAT_VOLT = 0;
 							for (i=0;i<4;i++)
-								BAT_ADC_VALUE[i] = 0;
+								BAT_VOLT_ADC_ARRAY[i] = 0;
 						}
 				}
 			break; 
@@ -214,8 +214,8 @@ void I2C2_EV_IRQHandler(void)
 					case GPIO_ESP_EN_L:
 						Disable_ESP();
 						break;
-					case BATTERY_VOL_IN:
-						GET_BAT_VOL = 1;
+					case BAT_VOLT_IN:
+						GET_BAT_VOLT = 1;
 						break;
 					case USER2_BUTTON_IN:
 						GET_USER2_BUTTON = 1;

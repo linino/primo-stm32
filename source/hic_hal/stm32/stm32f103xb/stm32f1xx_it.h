@@ -43,7 +43,7 @@
 #define GPIO_ESP_PW_L 	0xE9
 #define GPIO_ESP_EN_H 	0xEA
 #define GPIO_ESP_EN_L 	0xEB
-#define BATTERY_VOL_IN 	0xEC
+#define BAT_VOLT_IN 		0xEC
 #define USER2_BUTTON_IN 0xEE
 #define GPIO_USER1_IT 	0xF8
 

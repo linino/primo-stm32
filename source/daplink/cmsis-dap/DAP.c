@@ -1251,11 +1251,11 @@ uint32_t DAP_ProcessCommand(uint8_t *request, uint8_t *response) {
 
 #if (DAP_SWD != 0)
     case ID_DAP_SWD_Configure:
-			PowerOn_ESP();
-		  Enable_ESP();
-		  GPIO_USER1_BUTTON_Disable();
-			gpio_set_user2_led(GPIO_LED_OFF);
-		  gpio_set_ble_led(GPIO_LED_OFF);
+      PowerOn_ESP();
+      Enable_ESP();
+      GPIO_USER1_BUTTON_Disable();
+      gpio_set_user2_led(GPIO_LED_OFF);
+      gpio_set_ble_led(GPIO_LED_OFF);
       num = DAP_SWD_Configure(request, response);
       break;
 #else

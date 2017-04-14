@@ -73,6 +73,7 @@ void Enable_External_SWD_Program(void);
 void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
 void GPIO_USER2_BUTTON_SETUP(void);
+void GPIO_USER1_BUTTON_Disable(void);
 void WKUP_SETUP(void);
 void LedPowerOn(void);
 void LedPowerOff(void);

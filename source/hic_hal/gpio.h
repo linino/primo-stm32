@@ -41,6 +41,7 @@ void gpio_set_hid_led(gpio_led_state_t state);
 void gpio_set_cdc_led(gpio_led_state_t state);
 void gpio_set_msc_led(gpio_led_state_t state);
 void gpio_set_user2_led(gpio_led_state_t state);
+void gpio_set_ble_led(gpio_led_state_t state);
 uint8_t gpio_get_sw_reset(void);
 uint8_t gpio_get_user_button_pressed(void);
 

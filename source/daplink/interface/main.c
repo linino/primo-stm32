@@ -625,6 +625,24 @@ void GPIO_USER1_BUTTON_SETUP(void)
   NVIC_Init(&NVIC_InitStructure);  
 }
 
+void GPIO_USER1_BUTTON_Disable(void)
+{
+  EXTI_InitTypeDef EXTI_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  EXTI_InitStructure.EXTI_Line = EXTI_Line10;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+  EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+  EXTI_Init(&EXTI_InitStructure);
+
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
+
 void GPIO_USER2_BUTTON_SETUP(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;

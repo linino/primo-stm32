@@ -195,6 +195,16 @@ void gpio_set_user2_led(gpio_led_state_t state)
     }
 }
 
+void gpio_set_ble_led(gpio_led_state_t state)
+{
+    //gpio_set_hid_led(state);
+    if (state) {
+        GPIO_ResetBits(BLE_LED_PORT, BLE_LED_PIN); // LED on
+    } else {
+        GPIO_SetBits(BLE_LED_PORT, BLE_LED_PIN); // LED off
+    }
+}
+
 uint8_t gpio_get_sw_reset(void)
 {
     static uint8_t last_reset_forward_pressed = 0;

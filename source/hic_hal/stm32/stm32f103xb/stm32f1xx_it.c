@@ -58,7 +58,7 @@ __IO uint8_t SEND_REC_FLAG = 0;
 __IO uint8_t SEND_REC_DATA = 0;
 __IO uint8_t GET_TRAN_DATA = 0;
 __IO uint8_t GET_BAT_VOLT = 0;
-__IO uint8_t cir_reciver_count =0;
+__IO uint8_t cir_receiver_count =0;
 __IO uint8_t cir_transmitter_count =0;
 __IO uint8_t bat_transfer_count =0;
 __IO uint32_t BAT_VOLT_ADC = 0;
@@ -111,7 +111,7 @@ void I2C2_EV_IRQHandler(void)
 				}
 			else if (SEND_REC_DATA == 1)
 				{
-					I2C_SendData(I2C2, CirReceiverData[cir_reciver_count++]);
+					I2C_SendData(I2C2, CirReceiverData[cir_receiver_count++]);
 				}
 			else if (GET_BAT_VOLT == 1)
 				{
@@ -138,10 +138,10 @@ void I2C2_EV_IRQHandler(void)
 			else if (SEND_REC_DATA == 1)
 				{
 					int i;
-					I2C_SendData(I2C2, CirReceiverData[cir_reciver_count++]);
-					if (cir_reciver_count == 4)
+					I2C_SendData(I2C2, CirReceiverData[cir_receiver_count++]);
+					if (cir_receiver_count == 4)
 						{
-							cir_reciver_count = 0;
+							cir_receiver_count = 0;
 							SEND_REC_DATA = 0;
 							for (i=0;i<4;i++)
 								CirReceiverData[i] = 0;
@@ -231,10 +231,10 @@ void I2C2_EV_IRQHandler(void)
 					case GPIO_USER1_IT:
 						GPIO_USER1_BUTTON_SETUP();
 						break;
-					case CIR_ENABLE_RECIVER:
+					case CIR_ENABLE_RECEIVER:
 						enableIRIn();
 						break;
-					case CIR_DISABLE_RECIVER:
+					case CIR_DISABLE_RECEIVER:
 						disableIRIn();
 						break;
 					case CIR_RECEIVER:

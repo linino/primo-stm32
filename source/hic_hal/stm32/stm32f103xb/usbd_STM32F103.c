@@ -462,10 +462,10 @@ U32 USBD_ReadEP (U32 EPNum, U8 *pData, U32 size)
 
     pv  = (U32 *)(USB_PMA_ADDR + 2 * ((pBUF_DSCR + num)->ADDR_RX));
     cnt = (pBUF_DSCR + num)->COUNT_RX & EP_COUNT_MASK;
-//  if(cnt > size)
-//  {
-//      cnt = size;
-//  }
+    if(cnt > size)
+			{
+				cnt = size;
+			}
     for (n = 0; n < (cnt + 1) / 2; n++)
     {
         *((__packed U16 *)pData) = *pv++;

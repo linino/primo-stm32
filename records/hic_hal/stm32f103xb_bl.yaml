@@ -1,0 +1,45 @@
+common:
+    target:
+        - stm32f103xb
+    macros:
+        - INTERFACE_STM32F103XB
+        - CPU_STM32F103RBT6
+        - USE_STDPERIPH_DRIVER
+        - STM32F10X_MD
+        - DAPLINK_HIC_ID=0x97969904  # DAPLINK_HIC_ID_STM32F103XB
+        - BL_TARGET_FLASH
+    includes:
+        - source/hic_hal/stm32/stm32f103xb
+        - source/hic_hal/stm32/stm32f103xb/STM32F10x_StdPeriph_Driver/inc
+    sources:
+        hic_hal:
+            - source/hic_hal/stm32/stm32f103xb/DAP_config.h
+            - source/hic_hal/stm32/stm32f103xb/daplink_addr.h
+            - source/hic_hal/stm32/stm32f103xb/flash_hal_stm32f10x.c
+            - source/hic_hal/stm32/stm32f103xb/gpio.c
+            - source/hic_hal/stm32/stm32f103xb/IO_Config.h
+            - source/hic_hal/stm32/stm32f103xb/read_uid.c
+            - source/hic_hal/stm32/stm32f103xb/stm32f10x.h
+            - source/hic_hal/stm32/stm32f103xb/stm32f10x_conf.h
+            - source/hic_hal/stm32/stm32f103xb/system_stm32f10x.c
+            - source/hic_hal/stm32/stm32f103xb/system_stm32f10x.h
+            - source/hic_hal/stm32/stm32f103xb/uart.c
+            - source/hic_hal/stm32/stm32f103xb/usb_buf.h
+            - source/hic_hal/stm32/stm32f103xb/usb_config.c
+            - source/hic_hal/stm32/stm32f103xb/usbd_STM32F103.c
+            - source/hic_hal/stm32/stm32f103xb/usbreg.h
+            - source/hic_hal/stm32/stm32f103xb/armcc
+            - source/hic_hal/stm32/stm32f103xb/STM32F10x_StdPeriph_Driver/inc
+            - source/hic_hal/stm32/stm32f103xb/STM32F10x_StdPeriph_Driver/src
+
+tool_specific:
+    uvision:
+        misc:
+            ld_flags:
+                - --predefine="-I..\..\..\source\hic_hal\stm32\stm32f103xb"
+            c_flags:
+                - --no_unaligned_access
+            cxx_flags:
+                - --no_unaligned_access
+            asm_flags:
+                - --no_unaligned_access

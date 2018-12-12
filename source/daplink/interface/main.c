@@ -335,9 +335,6 @@ __task void main_task(void)
     GPIO_USER2_BUTTON_SETUP();
 		WKUP_SETUP();
 		BAT_DET_SETUP();
-		
-		if ((!(BAT_DET_PORT->IDR & (1 << 12))) & (Disable_StandbyMode == 0))
-			StandbyRTCMode_Measure();
 
 		if ((GND_DETECT_PORT->IDR & (1 << 2)))
 			Disable_External_SWD_Program();
@@ -365,6 +362,9 @@ __task void main_task(void)
     usb_state_count = USB_CONNECT_DELAY;
     // Start timer tasks
     os_tsk_create_user(timer_task_30mS, TIMER_TASK_30_PRIORITY, (void *)stk_timer_30_task, TIMER_TASK_30_STACK);
+
+		if ((!(BAT_DET_PORT->IDR & (1 << 12))) & (Disable_StandbyMode == 0))
+			StandbyRTCMode_Measure();
 
     while (1) {
 				
@@ -628,7 +628,6 @@ void GPIO_USER1_BUTTON_SETUP(void)
 void GPIO_USER1_BUTTON_Disable(void)
 {
   EXTI_InitTypeDef EXTI_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
 
   EXTI_InitStructure.EXTI_Line = EXTI_Line10;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
@@ -636,11 +635,6 @@ void GPIO_USER1_BUTTON_Disable(void)
   EXTI_InitStructure.EXTI_LineCmd = DISABLE;
   EXTI_Init(&EXTI_InitStructure);
 
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
-  NVIC_Init(&NVIC_InitStructure);
 }
 
 void GPIO_USER2_BUTTON_SETUP(void)

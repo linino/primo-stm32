@@ -101,7 +101,9 @@ void SleepMode_Measure(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, DISABLE);
 			
 	PWR_WakeUpPinCmd(DISABLE);
-	
+
+	BAT_DET_EXTI_LINE_Disable();
+
 	usbd_connect(0);
 	
 	os_suspend();
@@ -128,6 +130,7 @@ void SleepMode_Measure(void)
 	GPIO_GND_DETECT_SETUP();
   GPIO_USER2_BUTTON_SETUP();
 	WKUP_SETUP();
+	BAT_DET_EXTI_LINE_Enable();
 	
 	if ((GND_DETECT_PORT->IDR & (1 << 2)))
 		Disable_External_SWD_Program();

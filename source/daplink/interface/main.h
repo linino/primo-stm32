@@ -74,6 +74,8 @@ void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
 void GPIO_USER2_BUTTON_SETUP(void);
 void GPIO_USER1_BUTTON_Disable(void);
+void BAT_DET_EXTI_LINE_Enable(void);
+void BAT_DET_EXTI_LINE_Disable(void);
 void WKUP_SETUP(void);
 void LedPowerOn(void);
 void LedPowerOff(void);

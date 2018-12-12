@@ -634,7 +634,6 @@ void GPIO_USER1_BUTTON_Disable(void)
   EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
   EXTI_InitStructure.EXTI_LineCmd = DISABLE;
   EXTI_Init(&EXTI_InitStructure);
-
 }
 
 void GPIO_USER2_BUTTON_SETUP(void)
@@ -713,6 +712,28 @@ void BAT_DET_SETUP(void)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
   NVIC_Init(&NVIC_InitStructure);  
+}
+
+void BAT_DET_EXTI_LINE_Enable(void)
+{
+  EXTI_InitTypeDef EXTI_InitStructure;
+
+  EXTI_InitStructure.EXTI_Line = EXTI_Line12;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+}
+
+void BAT_DET_EXTI_LINE_Disable(void)
+{
+  EXTI_InitTypeDef EXTI_InitStructure;
+
+  EXTI_InitStructure.EXTI_Line = EXTI_Line12;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+  EXTI_Init(&EXTI_InitStructure);
 }
 
 void I2C2_RCC_Configuration(void)

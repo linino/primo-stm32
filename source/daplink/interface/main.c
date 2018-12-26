@@ -97,6 +97,7 @@ __IO uint8_t CIR_Transmitter_Ready = 0;
 __IO uint8_t KeyPressed = 0;
 __IO uint8_t BAT_Detect = 0;
 __IO uint8_t Disable_StandbyMode = 0;
+__IO uint8_t Enable_NRF52_RESET = 0;
 
 void GPIO_GND_DETECT_SETUP(void);
 void GPIO_USER1_BUTTON_SETUP(void);
@@ -367,6 +368,10 @@ __task void main_task(void)
 			StandbyRTCMode_Measure();
 
     while (1) {
+			  if(Enable_NRF52_RESET == 1) {
+					target_set_state(RESET_RUN);
+					Enable_NRF52_RESET = 0;
+				}
 				
 			  if (KeyPressed == 1)	
 					SleepMode_Measure();

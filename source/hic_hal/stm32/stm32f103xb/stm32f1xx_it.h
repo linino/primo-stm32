@@ -46,6 +46,7 @@
 #define BAT_VOLT_IN 			0xEC
 #define GET_BAT_VOLT_ADC	0xED
 #define USER2_BUTTON_IN 	0xEE
+#define NRF52_RESET	     	0xEF
 #define GPIO_USER1_IT 		0xF8
 
 #define CIR_ENABLE_RECEIVER	  		0xA0

@@ -50,7 +50,7 @@ extern __IO uint8_t CIR_Transmitter_Ready;
 extern __IO uint8_t KeyPressed ;
 extern __IO uint8_t BAT_Detect ;
 extern __IO uint8_t Disable_StandbyMode;
-
+extern __IO uint8_t Enable_NRF52_RESET;
 
 __IO uint8_t GET_USER2_BUTTON = 0;
 __IO uint8_t USER2_BUTTON_STATUS = 0xFF;
@@ -185,6 +185,9 @@ void I2C2_EV_IRQHandler(void)
 			}
 			switch(I2C2_Buffer_Rx)
 				{
+					case NRF52_RESET:
+						Enable_NRF52_RESET = 1;
+						break;
 					case USER2_LED_H:
 						LedUSER2On();
 						break;
